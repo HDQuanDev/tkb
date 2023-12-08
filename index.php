@@ -297,6 +297,9 @@ file_put_contents('viewer.txt', $view);
         </section>
         <!-- END Content Box 31 -->
         <!-- HTML for the login popup -->
+<?php
+            if (empty($_COOKIE['name']) && empty($_COOKIE['update']) && empty($_COOKIE['data'])) {
+            ?>
         <section>
             <div class="container">
                 <!-- Popup -->
@@ -319,7 +322,9 @@ file_put_contents('viewer.txt', $view);
                 </div>
             </div>
         </section>
-
+<?php
+}
+?>
         <!-- jQuery and AJAX -->
 
     </main>
