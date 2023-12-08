@@ -139,3 +139,20 @@ function getCookie(name) {
     }
     return null;
 }
+
+function updateDateTime() {
+    setInterval(() => {
+        let currentDateTime = new Date();
+        let date = currentDateTime.getDate().toString().padStart(2, '0');
+        let month = (currentDateTime.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
+        let year = currentDateTime.getFullYear();
+        let hours = currentDateTime.getHours().toString().padStart(2, '0');
+        let minutes = currentDateTime.getMinutes().toString().padStart(2, '0');
+        let seconds = currentDateTime.getSeconds().toString().padStart(2, '0');
+
+        let formattedDateTime = `Hiện Tại Là: ${date}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+        document.getElementById('time_server').innerText = formattedDateTime;
+    }, 1000);
+}
+
+updateDateTime();

@@ -165,7 +165,7 @@ function CheckFileExist($username)
                 $get_name = $get_a[$count]["name"];
             ?>
                 <h3>Chào bạn: <?= $get_name; ?></h3>
-                <a class="purchase">Hiện Tại Là: <?= date('d-m-Y H:i'); ?> </a>
+                <a class="purchase" id="time_server">Hiện Tại Là: <?= date('d-m-Y H:i:s'); ?> </a>
                 <div class="links">
                     <a id="update-data">Cập Nhật Lại Dữ Liệu</a>
                     <a id="delete-all-data">Xóa Toàn Bộ Dữ Liệu</a>
@@ -340,7 +340,7 @@ function CheckFileExist($username)
         if (isset($_COOKIE['username']) && isset($_COOKIE['update']) && isset($_COOKIE['password']) && !CheckFileExist($_COOKIE['username'])) {
         ?>
             <script>
-                swal("Thông báo", "Không tìm thấy dữ liệu của tài khoản, vui lòng ấn cập nhật dữ liệu để cập nhật lại!", "info");
+                swal("Thông báo", "Không tìm thấy dữ liệu của tài khoản, vui lòng ấn \"Xóa Toàn Bộ Dữ Liệu\" và thực hiện đăng nhập lại để cập nhật!", "info");
             </script>
 
         <?php
