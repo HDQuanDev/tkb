@@ -158,7 +158,7 @@ function CheckFileExist($username)
             <h3>Số lượt truy cập: <?= number_format(file_get_contents('viewer.txt')); ?></h3>
             <?php
 
-            if (isset($_COOKIE['username']) && isset($_COOKIE['update']) && isset($_COOKIE['password']) && CheckFileExist($_COOKIE['username'])) {
+            if (isset($_COOKIE['username']) && isset($_COOKIE['update']) && isset($_COOKIE['password'])) {
                 $get_a = file_get_contents("data/" . strtolower($_COOKIE['username']) . ".json");
                 $get_a = json_decode($get_a, true);
                 $count = count($get_a) - 1;
