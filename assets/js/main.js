@@ -38,45 +38,50 @@ $("#update-data").click(function () {
         title: "Cập nhật nhật dữ liệu mới nhất?",
         text: "Bạn có chắc chắn muốn cập nhật dữ liệu mới nhất? Dữ liệu cũ sẽ bị xóa! Thời gian cập nhật sẽ diễn ra trong khoảng 15s-60s, vui lòng chờ cập nhật xong mới rời khỏi trang!",
         icon: "warning",
-        button: "Đồng Ý!",
+        buttons: true,
+        dangerMode: true,
         closeOnClickOutside: false
-    }).then(function () {
-        swal({
-            title: "Đang cập nhật dữ liệu!",
-            text: "Vui lòng chờ trong giây lát!",
-            icon: "info",
-            button: false,
-            closeOnClickOutside: false
-        });
-        $.ajax({
-            url: '/api/connect.php',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                username: getCookie('username'),
-                password: getCookie('password')
-            },
-            success: function (response) {
-                if (response.status === 'success') {
-                    var date = new Date();
-                    date.setFullYear(date.getFullYear() + 1); // Set the expiry date to 1 year from now
-                    document.cookie = "data=" + JSON.stringify(response.data) + ";expires=" + date.toUTCString() + ";path=/";
-                    document.cookie = "update=" + Date.now() + ";expires=" + date.toUTCString() + ";path=/";
-                    swal("Cập nhật thành công!", "Dữ liệu đã được cập nhật thành công!", "success").then((value) => {
-                        window.location.href = "/index.php";
-                    });
-                } else {
+    }).then(function (willDelete) {
+        if (willDelete) {
+            swal({
+                title: "Đang cập nhật dữ liệu!",
+                text: "Vui lòng chờ trong giây lát!",
+                icon: "info",
+                button: false,
+                closeOnClickOutside: false
+            });
+            $.ajax({
+                url: '/api/connect.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    username: getCookie('username'),
+                    password: getCookie('password')
+                },
+                success: function (response) {
+                    if (response.status === 'success') {
+                        var date = new Date();
+                        date.setFullYear(date.getFullYear() + 1); // Set the expiry date to 1 year from now
+                        document.cookie = "data=" + JSON.stringify(response.data) + ";expires=" + date.toUTCString() + ";path=/";
+                        document.cookie = "update=" + Date.now() + ";expires=" + date.toUTCString() + ";path=/";
+                        swal("Cập nhật thành công!", "Dữ liệu đã được cập nhật thành công!", "success").then((value) => {
+                            window.location.href = "/index.php";
+                        });
+                    } else {
+                        swal("Cập nhật thất bại!", "Vui lòng kiểm tra lại tài khoản hoặc mật khẩu!", "error").then((value) => {
+                            window.location.href = "/index.php";
+                        });
+                    }
+                },
+                error: function (error) {
                     swal("Cập nhật thất bại!", "Vui lòng kiểm tra lại tài khoản hoặc mật khẩu!", "error").then((value) => {
                         window.location.href = "/index.php";
                     });
                 }
-            },
-            error: function (error) {
-                swal("Cập nhật thất bại!", "Vui lòng kiểm tra lại tài khoản hoặc mật khẩu!", "error").then((value) => {
-                    window.location.href = "/index.php";
-                });
-            }
-        });
+            });
+        } else {
+            swal("Nhắc nhở!", "Hãy ấn cấp nhật lại dữ liệu để tải lại dữ liệu thời khóa biểu mới nhất từ DangKyTinChi!", "info");
+        }
     });
 });
 // Hiển thị popup login
