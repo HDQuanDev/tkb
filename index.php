@@ -322,7 +322,7 @@ file_put_contents('viewer.txt', $view);
         <!-- jQuery and AJAX -->
 
     </main>
-    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/main.js?v=<?= time(); ?>"></script>
 </body>
 
 </html>
