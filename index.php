@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Thời Khóa Biểu</title>
+    <title>Thời Khóa Biểu By HDQuanDev</title>
     <link rel="shortcut icon" href="assets/img/fav.png">
 
     <!-- Bootstrap Grid -->
@@ -118,6 +118,9 @@ $periods = [
     10 => ['start' => '16:50', 'end' => '17:40'],
     11 => ['start' => '18:15', 'end' => '19:05'],
     12 => ['start' => '19:10', 'end' => '20:00'],
+    13 => ['start' => '20:10', 'end' => '21:00'],
+    14 => ['start' => '21:10', 'end' => '22:00'],
+    15 => ['start' => '22:10', 'end' => '23:00'],
 ];
 ?>
 
@@ -125,7 +128,7 @@ $periods = [
     <main id="page">
         <div class="space5"></div>
         <div class="intro">
-            <h2>Thời Khóa Biểu Online</h2>
+            <h2>Thời Khóa Biểu ICTU</h2>
             <?php
             if (isset($_COOKIE['name']) && isset($_COOKIE['update']) && isset($_COOKIE['data'])) {
             ?>
@@ -134,6 +137,7 @@ $periods = [
                 <div class="links">
                     <a id="update-data">Cập Nhật Lại Dữ Liệu</a>
                     <a id="delete-all-data">Xóa Toàn Bộ Dữ Liệu</a>
+                    <a href="https://www.facebook.com/quancp72h" target="_blank">Liên Hệ Hỗ Trợ</a>
                 </div>
             <?php
                 if (isset($_COOKIE['update']))
@@ -141,7 +145,13 @@ $periods = [
             }
             ?>
         </div>
-        <div class="space5"></div>
+        <?php
+        if (isset($_COOKIE['name']) && isset($_COOKIE['update']) && isset($_COOKIE['data'])) {
+        ?>
+            <div class="space5"></div>
+        <?php
+        }
+        ?>
         <!-- START Content Box 31 -->
 
         <section>
