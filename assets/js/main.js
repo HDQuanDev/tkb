@@ -88,7 +88,7 @@ if (getCookie('data') == null || getCookie('username') == null || getCookie('pas
     $('#loginButton').click(function () {
         swal({
             title: "Đang đăng nhập!",
-            text: "Vui lòng chờ trong giây lát!",
+            text: "Vui lòng không đóng cửa sổ này, quá trình mất từ 15s-60s vui lòng chờ!",
             icon: "info",
             button: false,
             closeOnClickOutside: false
@@ -116,6 +116,7 @@ if (getCookie('data') == null || getCookie('username') == null || getCookie('pas
                     var name = data.data[get_name - 1].name;
                     document.cookie = "name=" + name + ";expires=" + date.toUTCString() + ";path=/";
                     document.cookie = "data=" + JSON.stringify(data.data) + ";expires=" + date.toUTCString() + ";path=/";
+                    document.cookie = "update=" + Date.now() + ";expires=" + date.toUTCString() + ";path=/";
                     $('#loginButton').text('Đăng nhập');
                     $('#loginButton').removeAttr('disabled');
                     swal("Đăng nhập thành công!", "Chào mừng bạn đến với thời khóa biểu online, ấn OK để tiếp tục!", "success").then((value) => {
