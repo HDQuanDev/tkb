@@ -9,7 +9,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($gop['status'] == "error") {
             echo json_encode(array("status" => "error", "message" => "$gop[message]"));
         } else {
-            $get = array("status" => "success", "message" => "get data success", "data" => $gop);
+            $data = json_encode($gop);
+            $save = save_file($data, $username);
+            if ($save['status'] == "error") {
+                echo json_encode(array("status" => "error", "message" => "$save[message]"));
+                exit();
+            } else {
+                $get = array("status" => "success", "message" => "get data success", "data" => $gop);
+            }
             echo json_encode($get);
             exit();
         }
@@ -44,4 +51,21 @@ function connect($username, $password)
 
     curl_close($curl);
     return $response;
+}
+function save_file($data, $username)
+{
+    $username = strtolower($username);
+    if (!empty($username) && !empty($data)) {
+        $file = @fopen("../data/$username.json", "w+");
+        if (!$file) {
+            $result = array("status" => "error", "message" => "can't open file");
+        } else {
+            fwrite($file, $data);
+            fclose($file);
+            $result = array("status" => "success", "message" => "save data success");
+        }
+    } else {
+        $result = array("status" => "error", "message" => "username or data is empty");
+    }
+    return $result;
 }

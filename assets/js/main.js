@@ -21,8 +21,6 @@ $("#delete-all-data").click(function () {
             date.setFullYear(date.getFullYear() - 1); // Set the expiry date to 1 year ago
             document.cookie = "username=;expires=" + date.toUTCString() + ";path=/";
             document.cookie = "password=;expires=" + date.toUTCString() + ";path=/";
-            document.cookie = "name=;expires=" + date.toUTCString() + ";path=/";
-            document.cookie = "data=;expires=" + date.toUTCString() + ";path=/";
             document.cookie = "update=;expires=" + date.toUTCString() + ";path=/";
             swal("Xóa thành công!", "Dữ liệu đã được xóa thành công!", "success").then((value) => {
                 window.location.href = "/index.php";
@@ -62,7 +60,6 @@ $("#update-data").click(function () {
                     if (response.status === 'success') {
                         var date = new Date();
                         date.setFullYear(date.getFullYear() + 1); // Set the expiry date to 1 year from now
-                        document.cookie = "data=" + JSON.stringify(response.data) + ";expires=" + date.toUTCString() + ";path=/";
                         document.cookie = "update=" + Date.now() + ";expires=" + date.toUTCString() + ";path=/";
                         swal("Cập nhật thành công!", "Dữ liệu đã được cập nhật thành công, vui lòng ấn OK để tiếp tục!", "success").then((value) => {
                             window.location.href = "/index.php";
@@ -85,7 +82,7 @@ $("#update-data").click(function () {
     });
 });
 // Hiển thị popup login
-if (getCookie('data') == null || getCookie('username') == null || getCookie('password') == null || getCookie('name') == null || getCookie('update') == null) {
+if (getCookie('username') == null || getCookie('password') == null || getCookie('update') == null) {
 
     let loginPopup = document.getElementById('loginPopup');
     loginPopup.style.display = 'block';
@@ -116,11 +113,6 @@ if (getCookie('data') == null || getCookie('username') == null || getCookie('pas
                     date.setFullYear(date.getFullYear() + 1); // Set the expiry date to 1 year from now
                     document.cookie = "username=" + username + ";expires=" + date.toUTCString() + ";path=/";
                     document.cookie = "password=" + password + ";expires=" + date.toUTCString() + ";path=/";
-                    var result = data.data;
-                    var get_name = Object.keys(result).length;
-                    var name = data.data[get_name - 1].name;
-                    document.cookie = "name=" + name + ";expires=" + date.toUTCString() + ";path=/";
-                    document.cookie = "data=" + JSON.stringify(data.data) + ";expires=" + date.toUTCString() + ";path=/";
                     document.cookie = "update=" + Date.now() + ";expires=" + date.toUTCString() + ";path=/";
                     $('#loginButton').text('Đăng nhập');
                     $('#loginButton').removeAttr('disabled');

@@ -43,7 +43,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-
         #loginPopup {
             background: #1c768f;
             width: 450px;
@@ -141,6 +140,14 @@ $periods = [
 $view = file_get_contents('viewer.txt');
 $view = $view + 1;
 file_put_contents('viewer.txt', $view);
+function CheckFileExist($username)
+{
+    if (file_exists("data/$username.json")) {
+        return true;
+    } else {
+        return false;
+    }
+}
 ?>
 
 <body>
@@ -150,9 +157,14 @@ file_put_contents('viewer.txt', $view);
             <h2>Thời Khóa Biểu ICTU</h2>
             <h3>Số lượt truy cập: <?= number_format(file_get_contents('viewer.txt')); ?></h3>
             <?php
-            if (isset($_COOKIE['name']) && isset($_COOKIE['update']) && isset($_COOKIE['data'])) {
+
+            if (isset($_COOKIE['username']) && isset($_COOKIE['update']) && isset($_COOKIE['password']) && CheckFileExist($_COOKIE['username'])) {
+                $get_a = file_get_contents("data/" . strtolower($_COOKIE['username']) . ".json");
+                $get_a = json_decode($get_a, true);
+                $count = count($get_a) - 1;
+                $get_name = $get_a[$count]["name"];
             ?>
-                <h3>Chào bạn: <?= $_COOKIE['name']; ?></h3>
+                <h3>Chào bạn: <?= $get_name; ?></h3>
                 <a class="purchase">Hiện Tại Là: <?= date('d-m-Y H:i'); ?> </a>
                 <div class="links">
                     <a id="update-data">Cập Nhật Lại Dữ Liệu</a>
@@ -166,7 +178,7 @@ file_put_contents('viewer.txt', $view);
             ?>
         </div>
         <?php
-        if (isset($_COOKIE['name']) && isset($_COOKIE['update']) && isset($_COOKIE['data'])) {
+        if (isset($_COOKIE['username']) && isset($_COOKIE['update']) && isset($_COOKIE['password']) && CheckFileExist($_COOKIE['username'])) {
         ?>
             <div class="space5"></div>
         <?php
@@ -178,16 +190,15 @@ file_put_contents('viewer.txt', $view);
             <div class="container">
                 <div class="row">
                     <?php
-                    if (isset($_COOKIE['data']) && isset($_COOKIE['username']) && isset($_COOKIE['password'])) {
-                        $json = $_COOKIE['data'];
-                        $json = str_replace("\xc2\xa0", '', $json);
+                    if (isset($_COOKIE['username']) && isset($_COOKIE['update']) && isset($_COOKIE['password']) && CheckFileExist($_COOKIE['username'])) {
+                        $json = file_get_contents("data/" . strtolower($_COOKIE['username']) . ".json");
+                        $json = str_replace("\u00a0", '', $json);
                         $get = json_decode($json, true);
                         $count = count($get) - 1;
                         $dates = [];
                         for ($i = 0; $i < $count; $i++) {
-                            //echo 'môn ' . $get[$i]['lop-hoc-phan'] . '<br/>';
                             $thoigian = $get[$i]['thoi-gian'];
-                            preg_match_all('/Từ (\d{2}\/\d{2}\/\d{4}) đến (\d{2}\/\d{2}\/\d{4}): \((\d+)\)Thứ (\d) tiết ([\d,]+) \((\w+)\)/', $thoigian, $matches, PREG_SET_ORDER);
+                            preg_match_all('/Từ (\d{2}\/\d{2}\/\d{4}) đến (\d{2}\/\d{2}\/\d{4}): \((\d+)\)\s*Thứ (\d) tiết ([\d,]+) \((\w+)\)/', $thoigian, $matches, PREG_SET_ORDER);
                             foreach ($matches as $match) {
                                 $start = strtotime(str_replace("/", "-", $match[1]));
                                 $end = strtotime(str_replace("/", "-", $match[2]));
@@ -297,34 +308,44 @@ file_put_contents('viewer.txt', $view);
         </section>
         <!-- END Content Box 31 -->
         <!-- HTML for the login popup -->
-<?php
-            if (empty($_COOKIE['name']) && empty($_COOKIE['update']) && empty($_COOKIE['data'])) {
-            ?>
-        <section>
-            <div class="container">
-                <!-- Popup -->
-                <div id="loginPopup">
-                    <form id="loginForm">
-                        <h2>Đăng nhập</h2><br>
-                        <h4>Vui lòng sử dụng tài khoản DangKyTinChi của ICTU để đăng nhập!</h4><br>
-                        <div class="form-group">
-                            <label for="username">Tên đăng nhập:</label><br>
-                            <input type="text" id="username" class="form-control">
-                        </div>
+        <?php
+        if (empty($_COOKIE['username']) && empty($_COOKIE['update']) && empty($_COOKIE['password'])) {
+        ?>
+            <section>
+                <div class="container">
+                    <!-- Popup -->
+                    <div id="loginPopup">
+                        <form id="loginForm">
+                            <h2>Đăng nhập</h2><br>
+                            <h4>Vui lòng sử dụng tài khoản DangKyTinChi của ICTU để đăng nhập!</h4><br>
+                            <div class="form-group">
+                                <label for="username">Tên đăng nhập:</label><br>
+                                <input type="text" id="username" class="form-control">
+                            </div>
 
-                        <div class="form-group">
-                            <label for="password">Mật khẩu:</label><br>
-                            <input type="password" id="password" class="form-control">
-                        </div>
-                        <h4>Khi bạn ấn vào nút Đăng Nhập là bạn đã đồng ý cho chúng tôi lưu trữ thông tin của bạn trên Cookie máy bạn, thông tin này sẽ chỉ có bạn mới có thể xem được, và bạn có thể xóa chúng bất cứ lúc nào!</h4><br>
-                        <button type="button" id="loginButton" class="btn btn-primary btn-block">Đăng nhập</button>
-                    </form>
+                            <div class="form-group">
+                                <label for="password">Mật khẩu:</label><br>
+                                <input type="password" id="password" class="form-control">
+                            </div>
+                            <h4>Khi bạn ấn vào nút Đăng Nhập là bạn đã đồng ý cho chúng tôi lưu trữ thông tin của bạn trên Cookie máy bạn, thông tin này sẽ chỉ có bạn mới có thể xem được, và bạn có thể xóa chúng bất cứ lúc nào!</h4><br>
+                            <button type="button" id="loginButton" class="btn btn-primary btn-block">Đăng nhập</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
-        </section>
-<?php
-}
-?>
+            </section>
+        <?php
+        }
+        ?>
+        <?php
+        if (isset($_COOKIE['username']) && isset($_COOKIE['update']) && isset($_COOKIE['password']) && !CheckFileExist($_COOKIE['username'])) {
+        ?>
+            <script>
+                swal("Thông báo", "Không tìm thấy dữ liệu của tài khoản, vui lòng ấn cập nhật dữ liệu để cập nhật lại!", "info");
+            </script>
+
+        <?php
+        }
+        ?>
         <!-- jQuery and AJAX -->
 
     </main>
