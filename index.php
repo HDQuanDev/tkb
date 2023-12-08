@@ -142,6 +142,7 @@ $view = $view + 1;
 file_put_contents('viewer.txt', $view);
 function CheckFileExist($username)
 {
+    $username = strtolower($username);
     if (file_exists("data/$username.json")) {
         return true;
     } else {
