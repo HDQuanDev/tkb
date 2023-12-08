@@ -3,10 +3,25 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Trang web xem thời khóa biểu ICTU do Hứa Đức Quân phát triển và thiết kế">
+    <meta name="keywords" content="thời khóa biểu, ICTU, Hứa Đức Quân">
+    <meta name="author" content="Hứa Đức Quân">
     <title>Thời Khóa Biểu By HDQuanDev</title>
     <link rel="shortcut icon" href="assets/img/fav.png">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tkb.qdevs.tech">
+    <meta property="og:title" content="Thời Khóa Biểu By HDQuanDev">
+    <meta property="og:description" content="Trang web xem thời khóa biểu ICTU do Hứa Đức Quân phát triển và thiết kế">
+    <meta property="og:image" content="/assets/img/TKB.QDEVS.TECH.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://tkb.qdevs.tech">
+    <meta property="twitter:title" content="Thời Khóa Biểu By HDQuanDev">
+    <meta property="twitter:description" content="Trang web xem thời khóa biểu ICTU do Hứa Đức Quân phát triển và thiết kế">
+    <meta property="twitter:image" content="/assets/img/TKB.QDEVS.TECH.png">
 
     <!-- Bootstrap Grid -->
     <link rel="stylesheet" href="assets/css/bootstrap-grid.min.css">
@@ -122,6 +137,9 @@ $periods = [
     14 => ['start' => '21:10', 'end' => '22:00'],
     15 => ['start' => '22:10', 'end' => '23:00'],
 ];
+$view = file_get_contents('viewer.txt');
+$view = $view + 1;
+file_put_contents('viewer.txt', $view);
 ?>
 
 <body>
@@ -129,6 +147,7 @@ $periods = [
         <div class="space5"></div>
         <div class="intro">
             <h2>Thời Khóa Biểu ICTU</h2>
+            <h3>Số lượt truy cập: <?= number_format(file_get_contents('viewer.txt')); ?></h3>
             <?php
             if (isset($_COOKIE['name']) && isset($_COOKIE['update']) && isset($_COOKIE['data'])) {
             ?>
