@@ -45,7 +45,7 @@ $("#update-data").click(function () {
         if (willDelete) {
             swal({
                 title: "Đang cập nhật dữ liệu!",
-                text: "Vui lòng chờ trong giây lát!",
+                text: "Vui lòng không đóng cửa sổ này, tiến trình cập nhật mất từ 15s-60s vui lòng đợi!",
                 icon: "info",
                 button: false,
                 closeOnClickOutside: false
@@ -64,17 +64,17 @@ $("#update-data").click(function () {
                         date.setFullYear(date.getFullYear() + 1); // Set the expiry date to 1 year from now
                         document.cookie = "data=" + JSON.stringify(response.data) + ";expires=" + date.toUTCString() + ";path=/";
                         document.cookie = "update=" + Date.now() + ";expires=" + date.toUTCString() + ";path=/";
-                        swal("Cập nhật thành công!", "Dữ liệu đã được cập nhật thành công!", "success").then((value) => {
+                        swal("Cập nhật thành công!", "Dữ liệu đã được cập nhật thành công, vui lòng ấn OK để tiếp tục!", "success").then((value) => {
                             window.location.href = "/index.php";
                         });
                     } else {
-                        swal("Cập nhật thất bại!", "Vui lòng kiểm tra lại tài khoản hoặc mật khẩu!", "error").then((value) => {
+                        swal("Cập nhật thất bại!", "Vui lòng thử lại nếu vẫn không thể lấy dữ liệu mới hãy ấn xóa toàn bộ dữ liệu và đăng nhập lại, vui lòng ấn OK để tiếp tục!", "error").then((value) => {
                             window.location.href = "/index.php";
                         });
                     }
                 },
                 error: function (error) {
-                    swal("Cập nhật thất bại!", "Vui lòng kiểm tra lại tài khoản hoặc mật khẩu!", "error").then((value) => {
+                    swal("Cập nhật thất bại!", "Vui lòng thử lại nếu vẫn không thể lấy dữ liệu mới hãy ấn xóa toàn bộ dữ liệu và đăng nhập lại, vui lòng ấn OK để tiếp tục!", "error").then((value) => {
                         window.location.href = "/index.php";
                     });
                 }
