@@ -22,6 +22,13 @@ switch ($command) {
         ]);
         break;
     case '/addaccount':
+        if (CheckFileExist($chatId)) {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Bạn đã thêm tài khoản rồi. Để xem thời khóa biểu vui lòng gõ /tkb'
+            ]);
+            break;
+        }
         $message = explode(' ', $text);
         $username = $message[1];
         $password = $message[2];
@@ -42,7 +49,7 @@ switch ($command) {
             'chat_id' => $chatId
         ];
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://tkb.qdevs.tech/api/connect.php");
+        curl_setopt($ch, CURLOPT_URL, "https://tkb.qdevs.tech/api/telegram.php");
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -64,4 +71,26 @@ switch ($command) {
             break;
         }
         break;
+    case '/data':
+        if (!CheckFileExist($chatId)) {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản'
+            ]);
+            break;
+        }
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => 'Đây là đường dẫn tới file dữ liệu của bạn: <a href="https://tkb.qdevs.tech/data/' . $chatId . '.json">https://tkb.qdevs.tech/data/' . $chatId . '.json</a>',
+            'parse_mode' => 'HTML'
+        ]);
+}
+function CheckFileExist($username)
+{
+    $username = strtolower($username);
+    if (file_exists("data/$username.json")) {
+        return true;
+    } else {
+        return false;
+    }
 }
