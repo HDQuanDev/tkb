@@ -17,10 +17,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $array = [];
                 $array['chat_id'] = $chat_id;
                 $array['username'] = $username;
+                $array['password'] = $password;
                 $count = count($gop) - 1;
                 $get_name = $gop[$count]["name"];
                 $array['name'] = $get_name;
                 $array['time'] = time();
+                $array['send_noti'] = "true";
                 $com = json_encode($array);
                 $com_save = save_file($com, $chat_id);
             }

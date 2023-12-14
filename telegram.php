@@ -66,7 +66,7 @@ switch ($command) {
         } else if ($response['status'] == 'success') {
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Đã thêm tài khoản ' . $username . ' vào hệ thống. Để xem thời khóa biểu vui lòng gõ /tkb'
+                'text' => 'Đã thêm tài khoản ' . $username . ' vào hệ thống. Hệ thống sẽ tự động báo thời khóa biểu cho bạn mỗi khi gần đến giờ học'
             ]);
             break;
         }
@@ -84,6 +84,68 @@ switch ($command) {
             'text' => 'Đây là đường dẫn tới file dữ liệu của bạn: <a href="https://tkb.qdevs.tech/data/' . $chatId . '.json">https://tkb.qdevs.tech/data/' . $chatId . '.json</a>',
             'parse_mode' => 'HTML'
         ]);
+        break;
+    case '/load':
+        if (!CheckFileExist($chatId)) {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản'
+            ]);
+            break;
+        }
+        $data = file_get_contents("data/$chatId.json");
+        $data = json_decode($data, true);
+        $username = $data['username'];
+        $password = $data['password'];
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => 'Đang tải lại dữ liệu...',
+        ]);
+        $postData = [
+            'username' => $username,
+            'password' => $password,
+            'chat_id' => $chatId
+        ];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://tkb.qdevs.tech/api/telegram.php");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $response = json_decode($response, true);
+        if ($response['status'] == 'error') {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Đã xảy ra lỗi: ' . $response['message']
+            ]);
+            break;
+        } else if ($response['status'] == 'success') {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Đã tải lại dữ liệu thành công'
+            ]);
+            break;
+        }
+        break;
+    case '/delete':
+        if (!CheckFileExist($chatId)) {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản'
+            ]);
+            break;
+        }
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => 'Đang xóa tài khoản của bạn...',
+        ]);
+        unlink("data/$chatId.json");
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => 'Đã xóa tài khoản của bạn thành công'
+        ]);
+        break;
 }
 function CheckFileExist($username)
 {
