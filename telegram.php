@@ -1,35 +1,31 @@
 <?php
 
-// Nhúng thư viện Telegram Bot SDK
 require 'vendor/autoload.php';
 
-// Khai báo Token
-$botToken = '5945931731:AAF3FzfZaQB2-SqdHGVeLnu-saQVDkxs9uA'; 
+$botToken = '5945931731:AAF3FzfZaQB2-SqdHGVeLnu-saQVDkxs9uA';
 
-// Khởi tạo đối tượng Telegram bot
 $telegram = new Telegram\Bot\Api($botToken);
 
-// Nhận các bản cập nhật từ Telegram
 $update = $telegram->getWebhookUpdates();
 
-// Lấy ID trò chuyện
 $chatId = $update['message']['chat']['id'];
 
-// Kiểm tra xem tin nhắn là gì  
 $text = $update['message']['text'];
 
-// Xử lý dựa trên tin nhắn nhận được
 switch ($text) {
     case '/start':
         $telegram->sendMessage([
-            'chat_id' => $chatId, 
-            'text' => 'Xin chào! Tôi là Bot demo'
+            'chat_id' => $chatId,
+            'text' => 'Chào mừng bạn đến với bot thông báo thời khóa biểu của trường Đại Học CNTT & TT - Thái Nguyên. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu]'
         ]);
         break;
-    case 'Xin chào':
+    case '/addaccount':
+        $message = explode(' ', $text);
+        $username = $message[1];
+        $password = $message[2];
         $telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Chào bạn!'
+            'text' => 'Đã thêm tài khoản ' . $username . ' vào hệ thống. Để xem thời khóa biểu vui lòng gõ /tkb'
         ]);
-        break;  
+        break;
 }
