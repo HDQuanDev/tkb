@@ -25,6 +25,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $array['send_noti'] = "true";
                 $com = json_encode($array);
                 $com_save = save_file($com, $chat_id);
+                $endgop = json_encode($gop);
+                $json = str_replace("\u00a0", '', $endgop);
+                $get = json_decode($json, true);
+                $count = count($get) - 1;
+                $dates = [];
+                for ($i = 0; $i < $count; $i++) {
+                    $thoigian = $get[$i]['thoi-gian'];
+                    preg_match_all('/Từ (\d{2}\/\d{2}\/\d{4}) đến (\d{2}\/\d{2}\/\d{4}): \((\d+)\)\s*Thứ (\d) tiết ([\d,]+) \((\w+)\)/', $thoigian, $matches, PREG_SET_ORDER);
+                    foreach ($matches as $match) {
+                        $start = strtotime(str_replace("/", "-", $match[1]));
+                        $end = strtotime(str_replace("/", "-", $match[2]));
+                        $ngay = $match[4] - 1;
+                        for ($ii = $start; $ii <= $end; $ii += 24 * 60 * 60) {
+                            if (date('N', $ii) == $ngay) {
+                                $dates[] = [
+                                    'date' => $ii,
+                                    'subject' => $get[$i]['lop-hoc-phan'],
+                                    'period' => $match[5],
+                                    'class' => $get[$i]['dia-diem'],
+                                    'teacher' => $get[$i]['giang-vien'],
+                                    'buoi' => $match[3],
+                                    '30phut' => 'false',
+                                    '20phut' => 'false',
+                                    '10phut' => 'false',
+                                    'start' => 'false'
+                                ];
+                            }
+                        }
+                    }
+                }
+
+                usort($dates, function ($a, $b) {
+                    if ($a['date'] == $b['date']) {
+                        $periodA = explode(',', $a['period']);
+                        $periodB = explode(',', $b['period']);
+                        return $periodA[0] - $periodB[0];
+                    }
+                    return $a['date'] - $b['date'];
+                });
+
+                foreach ($dates as $date) {
+                    $data = json_encode($dates);
+                    save_file($data, 'data-' . $username);
+                }
             }
             $data = json_encode($gop);
             $save = save_file($data, $username);
