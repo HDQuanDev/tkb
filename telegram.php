@@ -12,7 +12,9 @@ $chatId = $update['message']['chat']['id'];
 
 $text = $update['message']['text'];
 
-switch ($text) {
+$tach = explode(' ', $text);
+$command = $tach[0];
+switch ($command) {
     case '/start':
         $telegram->sendMessage([
             'chat_id' => $chatId,
@@ -54,7 +56,7 @@ switch ($text) {
                 'text' => 'Đã xảy ra lỗi: ' . $response['message']
             ]);
             break;
-        }else if($response['status'] == 'success'){
+        } else if ($response['status'] == 'success') {
             $telegram->sendMessage([
                 'chat_id' => $chatId,
                 'text' => 'Đã thêm tài khoản ' . $username . ' vào hệ thống. Để xem thời khóa biểu vui lòng gõ /tkb'
