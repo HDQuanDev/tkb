@@ -23,9 +23,43 @@ switch ($text) {
         $message = explode(' ', $text);
         $username = $message[1];
         $password = $message[2];
+        if (empty($username) || empty($password)) {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu'
+            ]);
+            break;
+        }
         $telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Đã thêm tài khoản ' . $username . ' vào hệ thống. Để xem thời khóa biểu vui lòng gõ /tkb'
+            'text' => 'Đang thêm tài khoản ' . $username . ' vào hệ thống...'
         ]);
+        $postData = [
+            'username' => $username,
+            'password' => $password,
+            'chat_id' => $chatId
+        ];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://tkb.qdevs.tech/api/connect.php");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $response = json_decode($response, true);
+        if ($response['status'] == 'error') {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Đã xảy ra lỗi: ' . $response['message']
+            ]);
+            break;
+        }else if($response['status'] == 'success'){
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Đã thêm tài khoản ' . $username . ' vào hệ thống. Để xem thời khóa biểu vui lòng gõ /tkb'
+            ]);
+            break;
+        }
         break;
 }

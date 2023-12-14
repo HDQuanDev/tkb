@@ -3,12 +3,18 @@ error_reporting(0);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $chat_id = $_POST['chat_id'];
     if (!empty($username) && !empty($password)) {
         $get = connect($username, $password);
         $gop = json_decode($get, true);
         if ($gop['status'] == "error") {
             echo json_encode(array("status" => "error", "message" => "$gop[message]"));
         } else {
+            if (!empty($chat_id)) {
+                foreach ($gop as &$item) {
+                    $item['chat_id'] = $chat_id;
+                }
+            }
             $data = json_encode($gop);
             $save = save_file($data, $username);
             if ($save['status'] == "error") {
