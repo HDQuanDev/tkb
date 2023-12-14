@@ -46,10 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     'class' => $get[$i]['dia-diem'],
                                     'teacher' => $get[$i]['giang-vien'],
                                     'buoi' => $match[3],
-                                    '30phut' => 'false',
-                                    '20phut' => 'false',
-                                    '10phut' => 'false',
-                                    'start' => 'false'
+                                    '30phut' => false,
+                                    '20phut' => false,
+                                    '10phut' => false,
+                                    'start' => false
                                 ];
                             }
                         }

@@ -25,7 +25,7 @@ switch ($command) {
         if (CheckFileExist($chatId)) {
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Bạn đã thêm tài khoản rồi. Để xem thời khóa biểu vui lòng gõ /tkb'
+                'text' => 'Bạn đã thêm tài khoản rồi. Để xem data thời khóa biểu vui lòng gõ /data. Để xóa tài khoản vui lòng gõ /delete'
             ]);
             break;
         }

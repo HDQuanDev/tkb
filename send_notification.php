@@ -27,7 +27,7 @@ $periods = [
     13 => ['start' => '20:10', 'end' => '21:00'],
     14 => ['start' => '21:10', 'end' => '22:00'],
     15 => ['start' => '22:10', 'end' => '23:00'],
-    16 => ['start' => '02:10', 'end' => '03:00'],
+    16 => ['start' => '02:10', 'end' => '03:50'],
 ];
 
 function CheckFileExist($username)
@@ -71,42 +71,9 @@ foreach ($numberFiles as $file) {
 
     $username = $data['username'];
 
-    $json = file_get_contents("data/$username.json");
-    $json = str_replace("\u00a0", '', $json);
-    $get = json_decode($json, true);
-    $count = count($get) - 1;
-    $dates = [];
-    for ($i = 0; $i < $count; $i++) {
-        $thoigian = $get[$i]['thoi-gian'];
-        preg_match_all('/Từ (\d{2}\/\d{2}\/\d{4}) đến (\d{2}\/\d{2}\/\d{4}): \((\d+)\)\s*Thứ (\d) tiết ([\d,]+) \((\w+)\)/', $thoigian, $matches, PREG_SET_ORDER);
-        foreach ($matches as $match) {
-            $start = strtotime(str_replace("/", "-", $match[1]));
-            $end = strtotime(str_replace("/", "-", $match[2]));
-            $ngay = $match[4] - 1;
-            for ($ii = $start; $ii <= $end; $ii += 24 * 60 * 60) {
-                if (date('N', $ii) == $ngay) {
-                    $dates[] = [
-                        'date' => $ii,
-                        'subject' => $get[$i]['lop-hoc-phan'],
-                        'period' => $match[5],
-                        'class' => $get[$i]['dia-diem'],
-                        'teacher' => $get[$i]['giang-vien'],
-                        'buoi' => $match[3]
-                    ];
-                }
-            }
-        }
-    }
-
-    usort($dates, function ($a, $b) {
-        if ($a['date'] == $b['date']) {
-            $periodA = explode(',', $a['period']);
-            $periodB = explode(',', $b['period']);
-            return $periodA[0] - $periodB[0];
-        }
-        return $a['date'] - $b['date'];
-    });
-
+    $dates = file_get_contents("data/data-$username.json");
+    $dates = json_decode($dates, true);
+    $i = 0;
     foreach ($dates as $date) {
         $data = json_encode($dates);
         file_put_contents('dates.json', $data);
@@ -132,16 +99,45 @@ foreach ($numberFiles as $file) {
             $lop = $classFormat;
         }
         $time = time();
-        $time_noti = $date['date'] - 1800;
-        if (($time >= $time_noti)) {
-            // $telegram->sendMessage([
-            //     'chat_id' => $chat_id,
-            //     'text' => "🔔 Thông báo: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
-            // ]);
-
+        if ($date['30phut'] == false) {
+            $time_noti = $date['date'] - 1800;
+            if (($time >= $time_noti)) {
+                $telegram->sendMessage([
+                    'chat_id' => $chat_id,
+                    'text' => "🔔 Thông báo còn 30p nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
+                ]);
+                $dates[$i]['30phut'] = true;
+            }
+        } else if ($date['20phut'] == false) {
+            $time_noti = $date['date'] - 1200;
+            if (($time >= $time_noti)) {
+                $telegram->sendMessage([
+                    'chat_id' => $chat_id,
+                    'text' => "🔔 Thông báo còn 20p nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
+                ]);
+                $dates[$i]['20phut'] = true;
+            }
+        } else if ($date['10phut'] == false) {
+            $time_noti = $date['date'] - 600;
+            if (($time >= $time_noti)) {
+                $telegram->sendMessage([
+                    'chat_id' => $chat_id,
+                    'text' => "🔔 Thông báo còn 10p nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
+                ]);
+                $dates[$i]['10phut'] = true;
+            }
+        } else if ($date['start'] == false) {
+            $time_noti = $date['date'];
+            if (($time >= $time_noti)) {
+                $telegram->sendMessage([
+                    'chat_id' => $chat_id,
+                    'text' => "🔔 Thông báo bắt đầu tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
+                ]);
+                $dates[$i]['start'] = true;
+            }
         }
-
-        echo $time . " - " . $time_noti;
-        echo "<br>";
+        $i++;
     }
+    $data = json_encode($dates);
+    file_put_contents("data/data-$username.json", $data);
 }
