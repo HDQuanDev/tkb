@@ -174,6 +174,7 @@ switch ($command) {
             break;
         }
         $json = json_decode($getSubject, true);
+        file_put_contents("data/log.txt", $getSubject);
         $count = count($json);
         $text = "🔔 Danh sách $count môn học trong ngày hôm nay: \n\n";
         for ($i = 0; $i < $count; $i++) {

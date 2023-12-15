@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Ho_Chi_Minh');
 $periods = [
     1 => ['start' => '6:45', 'end' => '7:35'],
     2 => ['start' => '7:40', 'end' => '8:30'],
