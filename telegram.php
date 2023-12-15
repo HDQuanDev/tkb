@@ -207,7 +207,7 @@ switch ($command) {
         $dates = file_get_contents("data/data-$username.json");
         $dates = json_decode($dates, true);
         file_put_contents("data/log.txt", $dates);
-        $getSubject = getSubjecttoDay($dates);
+        $getSubject = getSubjecttoWeek($dates);
         if ($getSubject == "[]") {
             $telegram->sendMessage([
                 'chat_id' => $chatId,
