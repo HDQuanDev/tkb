@@ -155,6 +155,18 @@ foreach ($numberFiles as $file) {
         }
         $i++;
     }
-    $data = json_encode($dates);
-    file_put_contents("data/data-$username.json", $data);
+    $dataa = json_encode($dates);
+    file_put_contents("data/data-$username.json", $dataa);
+    $time = time();
+    $time_update = $data['time'];
+    $time_update = $time_update + 86400;
+    if ($time > $time_update && $data['tkb_old'] == false) {
+        $telegram->sendMessage([
+            'chat_id' => $chat_id,
+            'text' => "🔔 Thông báo cập nhật thời khóa biểu: \n\n*bold Dữ liệu thời khóa biểu của bạn đã cũ hơn 1 ngày, để cập nhật lại thời khóa biểu mới, vui lòng sử dụng lệnh /load*",
+        ]);
+        $data['tkb_old'] = true;
+        $data = json_encode($data);
+        file_put_contents("data/$chat_id.json", $data);
+    }
 }

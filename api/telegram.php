@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $array['name'] = $get_name;
                 $array['time'] = time();
                 $array['send_noti'] = "true";
+                $array['tkb_old'] = false;
                 $com = json_encode($array);
                 $com_save = save_file($com, $chat_id);
                 $endgop = json_encode($gop);
