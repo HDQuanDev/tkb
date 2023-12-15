@@ -27,7 +27,6 @@ $periods = [
     13 => ['start' => '20:10', 'end' => '21:00'],
     14 => ['start' => '21:10', 'end' => '22:00'],
     15 => ['start' => '22:10', 'end' => '23:00'],
-    16 => ['start' => '02:10', 'end' => '03:50'],
 ];
 
 function CheckFileExist($username)
@@ -120,7 +119,7 @@ foreach ($numberFiles as $file) {
                 if (($time >= $time_noti)) {
                     $telegram->sendMessage([
                         'chat_id' => $chat_id,
-                        'text' => "🔔 Thông báo còn 30p nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
+                        'text' => "🔔 Thông báo còn 30p nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . $date['period'] . " thời gian " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
                     ]);
                     $dates[$i]['30phut'] = true;
                 }
@@ -158,12 +157,15 @@ foreach ($numberFiles as $file) {
     $dataa = json_encode($dates);
     file_put_contents("data/data-$username.json", $dataa);
     $time = time();
+    $data = file_get_contents("data/$chat_id.json");
+    $data = json_decode($data, true);
     $time_update = $data['time'];
-    $time_update = $time_update + 86400;
+    $time_update = $time_update + 100000;
+    echo $time . " - " . $time_update;
     if ($time > $time_update && $data['tkb_old'] == false) {
         $telegram->sendMessage([
             'chat_id' => $chat_id,
-            'text' => "🔔 Thông báo cập nhật thời khóa biểu: \n\n*bold Dữ liệu thời khóa biểu của bạn đã cũ hơn 1 ngày, để cập nhật lại thời khóa biểu mới, vui lòng sử dụng lệnh /load*",
+            'text' => "🔔 Thông báo cập nhật thời khóa biểu: \n\n🎨 Dữ liệu thời khóa biểu của bạn đã cũ hơn 1 ngày, để cập nhật lại thời khóa biểu mới, vui lòng sử dụng lệnh /load",
         ]);
         $data['tkb_old'] = true;
         $data = json_encode($data);
