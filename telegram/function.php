@@ -76,6 +76,9 @@ function getSubjecttoDay($dates)
             $i++;
         }
     }
+    if ($i == 0) {
+        return "[]";
+    }
     return json_encode($subjects);
 }
 function getSubjecttoWeek($dates)
@@ -97,6 +100,9 @@ function getSubjecttoWeek($dates)
             $subjects[$i]["date"] = $date["date"];
             $i++;
         }
+    }
+    if ($i == 0) {
+        return "[]";
     }
     return json_encode($subjects);
 }
