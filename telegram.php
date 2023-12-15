@@ -231,12 +231,3 @@ switch ($command) {
         ]);
         break;
 }
-function CheckFileExist($username)
-{
-    $username = strtolower($username);
-    if (file_exists("data/$username.json")) {
-        return true;
-    } else {
-        return false;
-    }
-}
