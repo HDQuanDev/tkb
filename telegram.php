@@ -166,6 +166,13 @@ switch ($command) {
         $dates = file_get_contents("data/data-$username.json");
         $dates = json_decode($dates, true);
         $getSubject = getSubjecttoDay($dates);
+        if ($getSubject == "[]") {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Hôm nay bạn không có tiết học nào cả'
+            ]);
+            break;
+        }
         $json = json_decode($getSubject, true);
         $count = count($json);
         $text = "🔔 Danh sách môn học trong ngày hôm nay: \n\n";
@@ -198,6 +205,13 @@ switch ($command) {
         $dates = file_get_contents("data/data-$username.json");
         $dates = json_decode($dates, true);
         $getSubject = getSubjecttoDay($dates);
+        if ($getSubject == "[]") {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Tuần này bạn không có tiết học nào cả'
+            ]);
+            break;
+        }
         $json = json_decode($getSubject, true);
         $count = count($json);
         $text = "🔔 Danh sách môn học trong tuần này: \n\n";
