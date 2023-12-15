@@ -177,12 +177,12 @@ switch ($command) {
         $count = count($json);
         $text = "🔔 Danh sách môn học trong ngày hôm nay: \n\n";
         for ($i = 0; $i < $count; $i++) {
-            $subject = $getSubject[$i]['subject'];
-            $period = $getSubject[$i]['period'];
-            $class = $getSubject[$i]['class'];
-            $teacher = $getSubject[$i]['teacher'];
-            $buoi = $getSubject[$i]['buoi'];
-            $date = $getSubject[$i]['date'];
+            $subject = $json[$i]['subject'];
+            $period = $json[$i]['period'];
+            $class = $json[$i]['class'];
+            $teacher = $json[$i]['teacher'];
+            $buoi = $json[$i]['buoi'];
+            $date = $json[$i]['date'];
             $date = date('d/m/Y', $date);
             $text .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
         }
@@ -216,12 +216,12 @@ switch ($command) {
         $count = count($json);
         $text = "🔔 Danh sách môn học trong tuần này: \n\n";
         for ($i = 0; $i < $count; $i++) {
-            $subject = $getSubject[$i]['subject'];
-            $period = $getSubject[$i]['period'];
-            $class = $getSubject[$i]['class'];
-            $teacher = $getSubject[$i]['teacher'];
-            $buoi = $getSubject[$i]['buoi'];
-            $date = $getSubject[$i]['date'];
+            $subject = $json[$i]['subject'];
+            $period = $json[$i]['period'];
+            $class = $json[$i]['class'];
+            $teacher = $json[$i]['teacher'];
+            $buoi = $json[$i]['buoi'];
+            $date = $json[$i]['date'];
             $date = date('d/m/Y', $date);
             $text .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
         }
