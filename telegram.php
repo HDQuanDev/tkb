@@ -175,7 +175,7 @@ switch ($command) {
         }
         $json = json_decode($getSubject, true);
         $count = count($json);
-        $text = "🔔 Danh sách môn học trong ngày hôm nay: \n\n";
+        $text = "🔔 Danh sách $count môn học trong ngày hôm nay: \n\n";
         for ($i = 0; $i < $count; $i++) {
             $subject = $json[$i]['subject'];
             $period = $json[$i]['period'];
