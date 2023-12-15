@@ -165,6 +165,7 @@ switch ($command) {
         $username = $data['username'];
         $dates = file_get_contents("data/data-$username.json");
         $dates = json_decode($dates, true);
+        file_put_contents("data/log.txt", $dates);
         $getSubject = getSubjecttoDay($dates);
         if ($getSubject == "[]") {
             $telegram->sendMessage([
@@ -205,6 +206,7 @@ switch ($command) {
         $username = $data['username'];
         $dates = file_get_contents("data/data-$username.json");
         $dates = json_decode($dates, true);
+        file_put_contents("data/log.txt", $dates);
         $getSubject = getSubjecttoDay($dates);
         if ($getSubject == "[]") {
             $telegram->sendMessage([
@@ -214,6 +216,7 @@ switch ($command) {
             break;
         }
         $json = json_decode($getSubject, true);
+        file_put_contents("data/log.txt", $getSubject);
         $count = count($json);
         $text = "🔔 Danh sách môn học trong tuần này: \n\n";
         for ($i = 0; $i < $count; $i++) {
