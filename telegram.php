@@ -79,9 +79,12 @@ switch ($command) {
             ]);
             break;
         }
+        $data = file_get_contents("data/$chatId.json");
+        $data = json_decode($data, true);
+        $username = $data['username'];
         $telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Đây là đường dẫn tới file dữ liệu của bạn: <a href="https://tkb.qdevs.tech/data/' . $chatId . '.json">https://tkb.qdevs.tech/data/' . $chatId . '.json</a>',
+            'text' => 'Đây là các dữ liệu của bạn được lưu trên hệ thống:\n\n- <a href="https://tkb.qdevs.tech/data/' . $chatId . '.json">Dữ liệu chat</a>\n\n- <a href="https://tkb.qdevs.tech/data/data-' . $username . '.json">Dữ liệu thời khóa biểu</a>\n\n- <a href="https://tkb.qdevs.tech/data/' . $username . '-log.json">Dữ liệu xơ</a>',
             'parse_mode' => 'HTML'
         ]);
         break;
