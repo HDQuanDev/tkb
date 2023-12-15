@@ -1,7 +1,7 @@
 <?php
 
 require 'vendor/autoload.php';
-
+require_once 'telegram/function.php';
 $botToken = '5945931731:AAF3FzfZaQB2-SqdHGVeLnu-saQVDkxs9uA';
 
 $telegram = new Telegram\Bot\Api($botToken);
@@ -150,6 +150,70 @@ switch ($command) {
         $telegram->sendMessage([
             'chat_id' => $chatId,
             'text' => 'Đã xóa tài khoản của bạn thành công'
+        ]);
+        break;
+    case '/getsubjecttoday':
+        if (!CheckFileExist($chatId)) {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản'
+            ]);
+            break;
+        }
+        $data = file_get_contents("data/$chatId.json");
+        $data = json_decode($data, true);
+        $username = $data['username'];
+        $dates = file_get_contents("data/data-$username.json");
+        $dates = json_decode($dates, true);
+        $getSubject = getSubjecttoDay($dates);
+        $json = json_decode($getSubject, true);
+        $count = count($json);
+        $text = "🔔 Danh sách môn học trong ngày hôm nay: \n\n";
+        for ($i = 0; $i < $count; $i++) {
+            $subject = $getSubject[$i]['subject'];
+            $period = $getSubject[$i]['period'];
+            $class = $getSubject[$i]['class'];
+            $teacher = $getSubject[$i]['teacher'];
+            $buoi = $getSubject[$i]['buoi'];
+            $date = $getSubject[$i]['date'];
+            $date = date('d/m/Y', $date);
+            $text .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
+        }
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $text
+        ]);
+        break;
+    case '/getsubjecttoweak':
+        if (!CheckFileExist($chatId)) {
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => 'Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản'
+            ]);
+            break;
+        }
+        $data = file_get_contents("data/$chatId.json");
+        $data = json_decode($data, true);
+        $username = $data['username'];
+        $dates = file_get_contents("data/data-$username.json");
+        $dates = json_decode($dates, true);
+        $getSubject = getSubjecttoDay($dates);
+        $json = json_decode($getSubject, true);
+        $count = count($json);
+        $text = "🔔 Danh sách môn học trong tuần này: \n\n";
+        for ($i = 0; $i < $count; $i++) {
+            $subject = $getSubject[$i]['subject'];
+            $period = $getSubject[$i]['period'];
+            $class = $getSubject[$i]['class'];
+            $teacher = $getSubject[$i]['teacher'];
+            $buoi = $getSubject[$i]['buoi'];
+            $date = $getSubject[$i]['date'];
+            $date = date('d/m/Y', $date);
+            $text .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
+        }
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $text
         ]);
         break;
 }
