@@ -87,7 +87,7 @@ switch ($command) {
             'text' => 'Đây là các dữ liệu của bạn được lưu trên hệ thống:
             - <a href="https://tkb.qdevs.tech/data/' . $chatId . '.json">Dữ liệu chat</a>
             - <a href="https://tkb.qdevs.tech/data/data-' . $username . '.json">Dữ liệu thời khóa biểu</a>
-            - <a href="https://tkb.qdevs.tech/data/' . $username . '-log.json">Dữ liệu xơ</a>',
+            - <a href="https://tkb.qdevs.tech/data/' . $username . '.json">Dữ liệu xơ</a>',
             'parse_mode' => 'HTML'
         ]);
         break;
