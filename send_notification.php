@@ -47,6 +47,13 @@ function getStartAndEndTime($periodString)
     $endPeriod = max($periodsArray);
     return $periods[$startPeriod]['start'] . ' - ' . $periods[$endPeriod]['end'];
 }
+function getStartTimestramp($periodString)
+{
+    global $periods;
+    $periodsArray = explode(',', $periodString);
+    $startPeriod = min($periodsArray);
+    return $periods[$startPeriod]['start'];
+}
 function isCurrentPeriodAndDay($date, $period)
 {
     global $periods;
@@ -59,6 +66,11 @@ function isCurrentPeriodAndDay($date, $period)
         return true;
     }
     return false;
+}
+function convertToTimestamp($dateString)
+{
+    $date = DateTime::createFromFormat('H:i d/m/Y', $dateString);
+    return $date->getTimestamp();
 }
 foreach ($numberFiles as $file) {
 
@@ -99,41 +111,46 @@ foreach ($numberFiles as $file) {
             $lop = $classFormat;
         }
         $time = time();
-        if ($date['30phut'] == false) {
-            $time_noti = $date['date'] - 1800;
-            if (($time >= $time_noti)) {
-                $telegram->sendMessage([
-                    'chat_id' => $chat_id,
-                    'text' => "🔔 Thông báo còn 30p nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
-                ]);
-                $dates[$i]['30phut'] = true;
-            }
-        } else if ($date['20phut'] == false) {
-            $time_noti = $date['date'] - 1200;
-            if (($time >= $time_noti)) {
-                $telegram->sendMessage([
-                    'chat_id' => $chat_id,
-                    'text' => "🔔 Thông báo còn 20p nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
-                ]);
-                $dates[$i]['20phut'] = true;
-            }
-        } else if ($date['10phut'] == false) {
-            $time_noti = $date['date'] - 600;
-            if (($time >= $time_noti)) {
-                $telegram->sendMessage([
-                    'chat_id' => $chat_id,
-                    'text' => "🔔 Thông báo còn 10p nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
-                ]);
-                $dates[$i]['10phut'] = true;
-            }
-        } else if ($date['start'] == false) {
-            $time_noti = $date['date'];
-            if (($time >= $time_noti)) {
-                $telegram->sendMessage([
-                    'chat_id' => $chat_id,
-                    'text' => "🔔 Thông báo bắt đầu tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
-                ]);
-                $dates[$i]['start'] = true;
+        $time_start = getStartTimestramp($date['period']) . " " . date('d/m/Y', $date["date"]);
+        $time_start = convertToTimestamp($time_start);
+        $time_start_ex = $time_start + 100;
+        if ($time < $time_start_ex) {
+            if ($date['30phut'] == false) {
+                $time_noti = $time_start - 1800;
+                if (($time >= $time_noti)) {
+                    $telegram->sendMessage([
+                        'chat_id' => $chat_id,
+                        'text' => "🔔 Thông báo còn 30p nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
+                    ]);
+                    $dates[$i]['30phut'] = true;
+                }
+            } else if ($date['20phut'] == false) {
+                $time_noti = $time_start - 1200;
+                if (($time >= $time_noti)) {
+                    $telegram->sendMessage([
+                        'chat_id' => $chat_id,
+                        'text' => "🔔 Thông báo còn 20p nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
+                    ]);
+                    $dates[$i]['20phut'] = true;
+                }
+            } else if ($date['10phut'] == false) {
+                $time_noti = $time_start - 600;
+                if (($time >= $time_noti)) {
+                    $telegram->sendMessage([
+                        'chat_id' => $chat_id,
+                        'text' => "🔔 Thông báo còn 10p nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
+                    ]);
+                    $dates[$i]['10phut'] = true;
+                }
+            } else if ($date['start'] == false) {
+                $time_noti = $time_start;
+                if (($time >= $time_noti)) {
+                    $telegram->sendMessage([
+                        'chat_id' => $chat_id,
+                        'text' => "🔔 Thông báo bắt đầu tiết học: \n\n📅 Ngày: " . date('d/m/Y', $date["date"]) . "\n⏰ Tiết: " . getStartAndEndTime($date['period']) . "\n📚 Môn: " . $date['subject'] . "\n👨‍🏫 Giáo viên: " . $date['teacher'] . "\n🏫 Phòng: " . $date['class']
+                    ]);
+                    $dates[$i]['start'] = true;
+                }
             }
         }
         $i++;
