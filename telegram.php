@@ -84,7 +84,7 @@ switch ($command) {
         $username = $data['username'];
         $telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Đây là các dữ liệu của bạn được lưu trên hệ thống:\n\n- <a href="https://tkb.qdevs.tech/data/' . $chatId . '.json">Dữ liệu chat</a>\n\n- <a href="https://tkb.qdevs.tech/data/data-' . $username . '.json">Dữ liệu thời khóa biểu</a>\n\n- <a href="https://tkb.qdevs.tech/data/' . $username . '-log.json">Dữ liệu xơ</a>',
+            'text' => 'Đây là các dữ liệu của bạn được lưu trên hệ thống:<br>- <a href="https://tkb.qdevs.tech/data/' . $chatId . '.json">Dữ liệu chat</a><br>- <a href="https://tkb.qdevs.tech/data/data-' . $username . '.json">Dữ liệu thời khóa biểu</a><br>- <a href="https://tkb.qdevs.tech/data/' . $username . '-log.json">Dữ liệu xơ</a>',
             'parse_mode' => 'HTML'
         ]);
         break;
