@@ -72,29 +72,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $class = $date['class'];
                     $teacher = $date['teacher'];
                     $buoi = $date['buoi'];
-                    $add = false;
-                    $sql = "SELECT * FROM `tkb` WHERE `chatid` = '$chat_id' AND `date` = '$time' AND `subject` = '$subject' AND `period` = '$period' AND `class` = '$class' AND `teacher` = '$teacher' AND `buoi` = '$buoi'";
-                    $result = mysqli_query($db, $sql);
-                    if (mysqli_num_rows($result) == 1) {
-                        $row = mysqli_fetch_assoc($result);
+
+                    $sql_check = "SELECT * FROM `tkb` WHERE `chatid` = '$chat_id' AND `date` = '$time' AND `subject` = '$subject' AND `period` = '$period' AND `class` = '$class' AND `teacher` = '$teacher' AND `buoi` = '$buoi'";
+                    $result_check = mysqli_query($db, $sql_check);
+
+                    if (mysqli_num_rows($result_check) > 0) {
+                        $row = mysqli_fetch_assoc($result_check);
                         $phut30 = $row['30phut'];
                         $phut20 = $row['20phut'];
                         $phut10 = $row['10phut'];
                         $start = $row['start'];
+                        $id = $row['id'];
                         if ($phut30 == 'false' || $phut20 == 'false' || $phut10 == 'false' || $start == 'false') {
-                            $add = true;
+                            // Dữ liệu tồn tại và điều kiện không đúng, thực hiện cập nhật
+                            $sql_update = "UPDATE `tkb` SET `subject` = '$subject', `period` = '$period', `class` = '$class', `teacher` = '$teacher', `buoi` = '$buoi', `date` = '$time' WHERE `id` = '$id' AND `chatid` = '$chat_id'";
+                            $result_update = mysqli_query($db, $sql_update);
                         }
-                    }
-                    if ($add == true) {
-                        $sql = "INSERT INTO `tkb` (`chatid`, `username`, `date`, `subject`, `period`, `class`, `teacher`, `buoi`) VALUES ('$chat_id', '$username', '$time', '$subject', '$period', '$class', '$teacher', '$buoi')";
-                        $result = mysqli_query($db, $sql);
+                    } else {
+                        // Dữ liệu không tồn tại, thực hiện thêm mới
+                        $sql_insert = "INSERT INTO `tkb` (`chatid`, `username`, `date`, `subject`, `period`, `class`, `teacher`, `buoi`) VALUES ('$chat_id', '$username', '$time', '$subject', '$period', '$class', '$teacher', '$buoi')";
+                        $result_insert = mysqli_query($db, $sql_insert);
                     }
                 }
             }
-            if ($result) {
-                echo json_encode(array("status" => "success", "message" => "save data success"));
+
+            if ($result_update || $result_insert) {
+                echo json_encode(array("status" => "success", "message" => "Lưu dữ liệu thành công"));
             } else {
-                echo json_encode(array("status" => "error", "message" => "can't save data to database"));
+                echo json_encode(array("status" => "error", "message" => "Không thể lưu dữ liệu vào cơ sở dữ liệu"));
             }
             echo json_encode($get);
             exit();

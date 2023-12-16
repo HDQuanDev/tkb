@@ -1,12 +1,12 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = mysqli_real_escape_string($db, $_POST['username']);
-    $password = mysqli_real_escape_string($db, $_POST['password']);
-    $chat_id = mysqli_real_escape_string($db, $_POST['chat_id']);
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $chat_id = $_POST['chat_id'];
     $postData = [
         'username' => $username,
         'password' => $password,
-        'chat_id' => $chatId
+        'chat_id' => $chat_id
     ];
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "https://tkb.qdevs.tech/api/telegram.php");
