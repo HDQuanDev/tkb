@@ -24,6 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         echo json_encode(array("status" => "error", "message" => "can't save data to database, info: " . mysqli_error($db)));
                         exit();
                     }
+                } else {
+                    $time = time();
+                    $sql = "UPDATE `users` SET `time` = '$time', `tkb_old` = 'false'  WHERE `chatid` = '$chat_id'";
+                    $result = mysqli_query($db, $sql);
                 }
                 $endgop = json_encode($gop);
                 $json = str_replace("\u00a0", '', $endgop);
@@ -74,6 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $buoi = $date['buoi'];
                     $sql_insert = "INSERT INTO `tkb` (`chatid`, `username`, `date`, `subject`, `period`, `class`, `teacher`, `buoi`) VALUES ('$chat_id', '$username', '$time', '$subject', '$period', '$class', '$teacher', '$buoi')";
                     $result_insert = mysqli_query($db, $sql_insert);
+                    $id = mysqli_insert_id($db);
+                    if ($time < time()) {
+                        $insert_notification = mysqli_query($db, "INSERT INTO `notification` (`chatid`, `username`, `id_mon`, `30phut`, `20phut`, `10phut`, `start`) VALUES ('$chat_id', '$username', '$id', 'true', 'true', 'true', 'true')");
+                    }
                 }
             }
             if ($result_insert) {
