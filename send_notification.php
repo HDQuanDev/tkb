@@ -41,7 +41,7 @@ while ($row_user = mysqli_fetch_assoc($get_user)) {
         $time_start_ex = $time_start + 80;
         $send_success = false;
         $check_notification = mysqli_query($db, "SELECT * FROM `notification` WHERE `chatid` = '$chat_id' AND `username` = '$username' AND `id_mon` = '$id'");
-        if (mysqli_num_rows($check_notification) == 0) {
+        if (mysqli_num_rows($check_notification) == 0 && $time < $time_start_ex) {
             $insert_notification = mysqli_query($db, "INSERT INTO `notification` (`chatid`, `username`, `id_mon`) VALUES ('$chat_id', '$username', '$id')");
         }
         $data_notification = mysqli_fetch_assoc($check_notification);
