@@ -54,7 +54,7 @@ while ($row_user = mysqli_fetch_assoc($get_user)) {
                     'chat_id' => $chat_id,
                     'text' => $reply
                 ]);
-                AddLogChat($chat_id, $reply);
+                AddLogChat($chat_id, '', $reply);
                 $update_notification = mysqli_query($db, "UPDATE `notification` SET `30phut` = 'true' WHERE `chatid` = '$chat_id' AND `username` = '$username' AND `id_mon` = '$id'");
                 $send_success = true;
             } else if ($data_notification['20phut'] == 'false' && $time >= $time_start - 1200 && $time <= $time_start - 600) {
@@ -63,7 +63,7 @@ while ($row_user = mysqli_fetch_assoc($get_user)) {
                     'chat_id' => $chat_id,
                     'text' => $reply
                 ]);
-                AddLogChat($chat_id, $reply);
+                AddLogChat($chat_id, '', $reply);
                 $update_notification = mysqli_query($db, "UPDATE `notification` SET `20phut` = 'true' WHERE `chatid` = '$chat_id' AND `username` = '$username' AND `id_mon` = '$id'");
                 $send_success = true;
             } else if ($data_notification['10phut'] == 'false' && $time >= $time_start - 600 && $time <= $time_start - 300) {
@@ -72,16 +72,16 @@ while ($row_user = mysqli_fetch_assoc($get_user)) {
                     'chat_id' => $chat_id,
                     'text' => $reply
                 ]);
-                AddLogChat($chat_id, $reply);
+                AddLogChat($chat_id, '', $reply);
                 $update_notification = mysqli_query($db, "UPDATE `notification` SET `10phut` = 'true' WHERE `chatid` = '$chat_id' AND `username` = '$username' AND `id_mon` = '$id'");
                 $send_success = true;
-            } else if ($data_notification['start'] == 'false' && $time >= $time_start - 300 && $time <= $time_start) {
+            } else if ($data_notification['start'] == 'false' && $time >= $time_start - 100 && $time <= $time_start) {
                 $reply = "🔔 Thông báo đã bắt đầu vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
                 $telegram->sendMessage([
                     'chat_id' => $chat_id,
                     'text' => $reply
                 ]);
-                AddLogChat($chat_id, $reply);
+                AddLogChat($chat_id, '', $reply);
                 $update_notification = mysqli_query($db, "UPDATE `notification` SET `start` = 'true' WHERE `chatid` = '$chat_id' AND `username` = '$username' AND `id_mon` = '$id'");
                 $send_success = true;
             }
@@ -89,5 +89,17 @@ while ($row_user = mysqli_fetch_assoc($get_user)) {
         if ($send_success == true) {
             break;
         }
+    }
+    $time = time();
+    $time_update = convertToTimestamp($get_user['time']);
+    $time_update = $time_update + 87000;
+    if ($time > $time_update && $get_user['tkb_old'] == 'false') {
+        $reply = "🔔 Thông báo cập nhật thời khóa biểu: \n\n🎨 Dữ liệu thời khóa biểu của bạn đã cũ hơn 1 ngày, để cập nhật lại thời khóa biểu mới, vui lòng sử dụng lệnh /load";
+        $telegram->sendMessage([
+            'chat_id' => $chat_id,
+            'text' => $reply
+        ]);
+        AddLogChat($chat_id, '', $reply);
+        $update_time = mysqli_query($db, "UPDATE `users` SET `tkb_old` = 'true' WHERE `chatid` = '$chat_id' AND `username` = '$username'");
     }
 }
