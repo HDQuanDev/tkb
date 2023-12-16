@@ -95,13 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
                 }
             }
-
             if ($result_update || $result_insert) {
                 echo json_encode(array("status" => "success", "message" => "Lưu dữ liệu thành công"));
             } else {
                 echo json_encode(array("status" => "error", "message" => "Không thể lưu dữ liệu vào cơ sở dữ liệu"));
             }
-            echo json_encode($get);
             exit();
         }
     } else {
