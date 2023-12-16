@@ -80,7 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $sql_insert = "INSERT INTO `tkb` (`chatid`, `username`, `date`, `subject`, `period`, `class`, `teacher`, `buoi`) VALUES ('$chat_id', '$username', '$time', '$subject', '$period', '$class', '$teacher', '$buoi')";
                     $result_insert = mysqli_query($db, $sql_insert);
                     $id = mysqli_insert_id($db);
-                    if ($time < time()) {
+                    $time_start = getStartTimestramp($period) . " " . date('d/m/Y', $time);
+                    $time_start = convertToTimestamp($time_start);
+                    if ($time_start < time()) {
                         $insert_notification = mysqli_query($db, "INSERT INTO `notification` (`chatid`, `username`, `id_mon`, `30phut`, `20phut`, `10phut`, `start`) VALUES ('$chat_id', '$username', '$id', 'true', 'true', 'true', 'true')");
                     }
                 }
