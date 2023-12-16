@@ -49,7 +49,7 @@ while ($row_user = mysqli_fetch_assoc($get_user)) {
             $seconds_remaining = $time_start - $time;
             $minutes_remaining = floor($seconds_remaining / 60);
             if ($data_notification['30phut'] == 'false' && $time >= $time_start - 1800 && $time <= $time_start - 1200) {
-                $reply = "🔔 Thông báo còn $minutes_remaining nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $row['class'];
+                $reply = "🔔 Thông báo còn $minutes_remaining phút nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
                 $telegram->sendMessage([
                     'chat_id' => $chat_id,
                     'text' => $reply
@@ -58,7 +58,7 @@ while ($row_user = mysqli_fetch_assoc($get_user)) {
                 $update_notification = mysqli_query($db, "UPDATE `notification` SET `30phut` = 'true' WHERE `chatid` = '$chat_id' AND `username` = '$username' AND `id_mon` = '$id'");
                 $send_success = true;
             } else if ($data_notification['20phut'] == 'false' && $time >= $time_start - 1200 && $time <= $time_start - 600) {
-                $reply = "🔔 Thông báo còn $minutes_remaining nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $row['class'];
+                $reply = "🔔 Thông báo còn $minutes_remaining phút nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
                 $telegram->sendMessage([
                     'chat_id' => $chat_id,
                     'text' => $reply
@@ -67,7 +67,7 @@ while ($row_user = mysqli_fetch_assoc($get_user)) {
                 $update_notification = mysqli_query($db, "UPDATE `notification` SET `20phut` = 'true' WHERE `chatid` = '$chat_id' AND `username` = '$username' AND `id_mon` = '$id'");
                 $send_success = true;
             } else if ($data_notification['10phut'] == 'false' && $time >= $time_start - 600 && $time <= $time_start - 300) {
-                $reply = "🔔 Thông báo còn $minutes_remaining nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $row['class'];
+                $reply = "🔔 Thông báo còn $minutes_remaining phút nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
                 $telegram->sendMessage([
                     'chat_id' => $chat_id,
                     'text' => $reply
@@ -76,7 +76,7 @@ while ($row_user = mysqli_fetch_assoc($get_user)) {
                 $update_notification = mysqli_query($db, "UPDATE `notification` SET `10phut` = 'true' WHERE `chatid` = '$chat_id' AND `username` = '$username' AND `id_mon` = '$id'");
                 $send_success = true;
             } else if ($data_notification['start'] == 'false' && $time >= $time_start - 300 && $time <= $time_start) {
-                $reply = "🔔 Thông báo còn $minutes_remaining nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $row['class'];
+                $reply = "🔔 Thông báo đã bắt đầu vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
                 $telegram->sendMessage([
                     'chat_id' => $chat_id,
                     'text' => $reply
