@@ -134,10 +134,14 @@ function getSubjecttoWeek($chatid)
 {
     global $db;
     $currentDate = new DateTime();
-    $weekStart = clone $currentDate;
-    $weekStart = $weekStart->modify('Monday this week')->format('Y-m-d');
-    $weekEnd = clone $currentDate;
-    $weekEnd = $weekEnd->modify('Sunday this week')->format('Y-m-d');
+    $week = $currentDate->format("W");
+    $year = $currentDate->format("o");
+    $weekStart = new DateTime();
+    $weekStart->setISODate($year, $week);
+    $weekEnd = clone $weekStart;
+    $weekEnd->modify('+6 days');
+    $weekStart = $weekStart->format('Y-m-d');
+    $weekEnd = $weekEnd->format('Y-m-d');
     $sql = "SELECT *, FROM_UNIXTIME(`date`, '%Y-%m-%d') as `date_formatted` FROM `tkb` WHERE `chatid` = '$chatid'";
     $result = mysqli_query($db, $sql);
     $subjects = [];
