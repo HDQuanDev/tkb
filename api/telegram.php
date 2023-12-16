@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $count = count($gop) - 1;
                 $get_name = $gop[$count]["name"];
                 if (mysqli_num_rows($check) == 0) {
-                    $sql = "INSERT INTO `users` (`chatid`, `username`, `password`, `name`) VALUES ('$chat_id', '$username', '$password', `$get_name`)";
+                    $sql = "INSERT INTO `users` (`chatid`, `username`, `password`, `name`) VALUES ('$chat_id', '$username', '$password', '$get_name')";
                     $result = mysqli_query($db, $sql);
                     if (!$result) {
                         echo json_encode(array("status" => "error", "message" => "can't save data to database, info: " . mysqli_error($db)));
