@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         }
                     }
                     if ($add == true) {
-                        $sql = "INSERT INTO `tkb` (`chatid`, `username`, `date`, `subject`, `period`, `class`, `teacher`, `buoi`) VALUES ('$chat_id', '$username', $time', '$subject', '$period', '$class', '$teacher', '$buoi')";
+                        $sql = "INSERT INTO `tkb` (`chatid`, `username`, `date`, `subject`, `period`, `class`, `teacher`, `buoi`) VALUES ('$chat_id', '$username', '$time', '$subject', '$period', '$class', '$teacher', '$buoi')";
                         $result = mysqli_query($db, $sql);
                     }
                 }
