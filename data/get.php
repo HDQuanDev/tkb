@@ -2,7 +2,7 @@
 require_once '../telegram/function.php';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     switch ($_GET['act']) {
-        case 'get':
+        case 'log':
             $chat_id = $_GET['id'];
             $sql = "SELECT * FROM `users` WHERE `chatid` = '$chat_id'";
             $result = mysqli_query($db, $sql);
