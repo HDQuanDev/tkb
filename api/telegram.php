@@ -1,9 +1,9 @@
 <?php
 require_once '../telegram/function.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $chat_id = $_POST['chat_id'];
+    $username = mysqli_real_escape_string($db, $_POST['username']);
+    $password = mysqli_real_escape_string($db, $_POST['password']);
+    $chat_id = mysqli_real_escape_string($db, $_POST['chat_id']);
     if (!empty($username) && !empty($password)) {
         $get = connect($username, $password);
         $gop = json_decode($get, true);
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $sql = "INSERT INTO `users` (`chatid`, `username`, `password`, `name`) VALUES ('$chat_id', '$username', '$password', `$get_name`)";
                     $result = mysqli_query($db, $sql);
                     if (!$result) {
-                        echo json_encode(array("status" => "error", "message" => "can't save data to database"));
+                        echo json_encode(array("status" => "error", "message" => "can't save data to database, info: " . mysqli_error($db)));
                         exit();
                     }
                 }
