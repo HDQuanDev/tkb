@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 foreach ($gop as &$item) {
                     $item['chat_id'] = $chat_id;
                 }
-                $check = mysqli_query($db, "DELETE FROM `users` WHERE `chatid` = '$chat_id'");
+                $check = mysqli_query($db, "SELECT * FROM `users` WHERE `chatid` = '$chat_id'");
                 $count = count($gop) - 1;
                 $get_name = $gop[$count]["name"];
                 if ($check) {
