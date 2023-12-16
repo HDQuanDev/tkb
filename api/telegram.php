@@ -1,5 +1,5 @@
 <?php
-error_reporting(0);
+require_once '../telegram/function.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -14,18 +14,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 foreach ($gop as &$item) {
                     $item['chat_id'] = $chat_id;
                 }
-                $array = [];
-                $array['chat_id'] = $chat_id;
-                $array['username'] = $username;
-                $array['password'] = $password;
+                $check = mysqli_query($db, "DELETE FROM `users` WHERE `chatid` = '$chat_id'");
                 $count = count($gop) - 1;
                 $get_name = $gop[$count]["name"];
-                $array['name'] = $get_name;
-                $array['time'] = time();
-                $array['send_noti'] = "true";
-                $array['tkb_old'] = false;
-                $com = json_encode($array);
-                $com_save = save_file($com, $chat_id);
+                if ($check) {
+                    echo json_encode(array("status" => "error", "message" => "you have already registered, please delete the old account and register again"));
+                    exit();
+                } else {
+                    $sql = "INSERT INTO `users` (`chatid`, `username`, `password`, `name`) VALUES ('$chat_id', '$username', '$password', `$get_name`)";
+                    $result = mysqli_query($db, $sql);
+                    if (!$result) {
+                        echo json_encode(array("status" => "error", "message" => "can't save data to database"));
+                        exit();
+                    }
+                }
                 $endgop = json_encode($gop);
                 $json = str_replace("\u00a0", '', $endgop);
                 $get = json_decode($json, true);
@@ -67,17 +69,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 });
 
                 foreach ($dates as $date) {
-                    $data = json_encode($dates);
-                    save_file($data, 'data-' . $username);
+                    $time = $date['date'];
+                    $subject = $date['subject'];
+                    $period = $date['period'];
+                    $class = $date['class'];
+                    $teacher = $date['teacher'];
+                    $buoi = $date['buoi'];
+                    $sql = "INSERT INTO `tkb` (`chatid`, `username`, `date`, `subject`, `period`, `class`, `teacher`, `buoi`) VALUES ('$chat_id', '$username', $time', '$subject', '$period', '$class', '$teacher', '$buoi')";
+                    $result = mysqli_query($db, $sql);
                 }
             }
-            $data = json_encode($gop);
-            $save = save_file($data, $username);
-            if ($save['status'] == "error") {
-                echo json_encode(array("status" => "error", "message" => "$save[message]"));
-                exit();
+            if ($result) {
+                echo json_encode(array("status" => "success", "message" => "save data success"));
             } else {
-                $get = array("status" => "success", "message" => "get data success", "data" => $gop);
+                echo json_encode(array("status" => "error", "message" => "can't save data to database"));
             }
             echo json_encode($get);
             exit();
@@ -113,21 +118,4 @@ function connect($username, $password)
 
     curl_close($curl);
     return $response;
-}
-function save_file($data, $username)
-{
-    $username = strtolower($username);
-    if (!empty($username) && !empty($data)) {
-        $file = @fopen("../data/$username.json", "w+");
-        if (!$file) {
-            $result = array("status" => "error", "message" => "can't open file");
-        } else {
-            fwrite($file, $data);
-            fclose($file);
-            $result = array("status" => "success", "message" => "save data success");
-        }
-    } else {
-        $result = array("status" => "error", "message" => "username or data is empty");
-    }
-    return $result;
 }

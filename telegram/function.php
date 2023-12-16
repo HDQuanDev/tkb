@@ -17,7 +17,58 @@ $periods = [
     14 => ['start' => '21:10', 'end' => '22:00'],
     15 => ['start' => '22:10', 'end' => '23:00'],
 ];
-
+$db = mysqli_connect('localhost', 'qdevs_tkb', '2S.XY0?()JmL', 'qdevs_tkb');
+mysqli_set_charset($db, 'utf8');
+if (!$db) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+function CheckIdChat($chat_id)
+{
+    global $db;
+    $sql = "SELECT * FROM `users` WHERE `chatid` = '$chat_id'";
+    $result = mysqli_query($db, $sql);
+    if (mysqli_num_rows($result) > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+function AddLogChat($chat_id, $message, $reply = null)
+{
+    global $db;
+    $sql = "INSERT INTO `log` (`chatid`, `message`, `reply`) VALUES ('$chat_id', '$message', '$reply')";
+    $result = mysqli_query($db, $sql);
+    if ($result) {
+        return true;
+    } else {
+        return false;
+    }
+}
+function GetDataUser($chat_id)
+{
+    global $db;
+    $sql = "SELECT * FROM `users` WHERE `chatid` = '$chat_id'";
+    $result = mysqli_query($db, $sql);
+    if (mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        return json_encode($row);
+    } else {
+        return false;
+    }
+}
+function DeleteAllDataUser($chat_id)
+{
+    global $db;
+    $tables = ['users', 'log', 'tkb'];
+    foreach ($tables as $table) {
+        $sql = "DELETE FROM `$table` WHERE `chatid` = '$chat_id'";
+        $result = mysqli_query($db, $sql);
+        if (!$result) {
+            return false;
+        }
+    }
+    return true;
+}
 function CheckFileExist($username)
 {
     $username = strtolower($username);
@@ -60,49 +111,41 @@ function convertToTimestamp($dateString)
     $date = DateTime::createFromFormat('H:i d/m/Y', $dateString);
     return $date->getTimestamp();
 }
-function getSubjecttoDay($dates)
+function getSubjecttoDay($chatid)
 {
+    global $db;
     $currentDate = date('Y-m-d');
+    $sql = "SELECT *, FROM_UNIXTIME(`date`, '%Y-%m-%d') as `date_formatted` FROM `tkb` WHERE `chatid` = '$chatid'";
+    $result = mysqli_query($db, $sql);
     $subjects = [];
-    $i = 0;
-    foreach ($dates as $date) {
-        $date_get = date('Y-m-d', $date["date"]);
-        if ($date_get == $currentDate) {
-            $subjects[$i]["subject"] = $date['subject'];
-            $subjects[$i]["period"] = $date['period'];
-            $subjects[$i]["class"] = $date['class'];
-            $subjects[$i]["teacher"] = $date['teacher'];
-            $subjects[$i]["buoi"] = $date['buoi'];
-            $subjects[$i]["date"] = $date["date"];
-            $i++;
+    while ($row = mysqli_fetch_assoc($result)) {
+        if ($row['date_formatted'] == $currentDate) {
+            unset($row['date_formatted']);
+            $subjects[] = $row;
         }
     }
-    if ($i == 0) {
+    if (count($subjects) == 0) {
         return "[]";
     }
     return json_encode($subjects);
 }
-function getSubjecttoWeek($dates)
+function getSubjecttoWeek($chatid)
 {
+    global $db;
     $currentDate = new DateTime();
     $weekStart = $currentDate->modify('Monday this week')->format('Y-m-d');
     $weekEnd = $currentDate->modify('Sunday this week')->format('Y-m-d');
-
+    $sql = "SELECT *, FROM_UNIXTIME(`date`, '%Y-%m-%d') as `date_formatted` FROM `tkb` WHERE `chatid` = '$chatid'";
+    $result = mysqli_query($db, $sql);
     $subjects = [];
-    $i = 0;
-    foreach ($dates as $date) {
-        $date_get = date('Y-m-d', $date["date"]);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $date_get = $row['date_formatted'];
         if ($date_get >= $weekStart && $date_get <= $weekEnd) {
-            $subjects[$i]["subject"] = $date['subject'];
-            $subjects[$i]["period"] = $date['period'];
-            $subjects[$i]["class"] = $date['class'];
-            $subjects[$i]["teacher"] = $date['teacher'];
-            $subjects[$i]["buoi"] = $date['buoi'];
-            $subjects[$i]["date"] = $date["date"];
-            $i++;
+            unset($row['date_formatted']); // remove the formatted date from the result
+            $subjects[] = $row;
         }
     }
-    if ($i == 0) {
+    if (count($subjects) == 0) {
         return "[]";
     }
     return json_encode($subjects);

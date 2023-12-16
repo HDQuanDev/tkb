@@ -16,33 +16,50 @@ $tach = explode(' ', $text);
 $command = $tach[0];
 switch ($command) {
     case '/start':
-        $telegram->sendMessage([
-            'chat_id' => $chatId,
-            'text' => 'Chào mừng bạn đến với bot thông báo thời khóa biểu của trường Đại Học CNTT & TT - Thái Nguyên. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu]'
-        ]);
-        break;
-    case '/addaccount':
-        if (CheckFileExist($chatId)) {
+        if (CheckIdChat($chatId)) {
+            $reply = "Bạn đã thêm tài khoản rồi. Để xem data thời khóa biểu vui lòng gõ /data. Để xóa tài khoản vui lòng gõ /delete";
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Bạn đã thêm tài khoản rồi. Để xem data thời khóa biểu vui lòng gõ /data. Để xóa tài khoản vui lòng gõ /delete'
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
+            break;
+        }
+        $reply = "Chào mừng bạn đến với bot thông báo thời khóa biểu của trường Đại Học CNTT & TT - Thái Nguyên. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] ví dụ: /addaccount ictu123456 123456";
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $reply
+        ]);
+        AddLogChat($chatId, $text, $reply);
+        break;
+    case '/addaccount':
+        if (CheckIdChat($chatId)) {
+            $reply = "Bạn đã thêm tài khoản rồi. Để xem data thời khóa biểu vui lòng gõ /data. Để xóa tài khoản vui lòng gõ /delete";
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => $reply
+            ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         }
         $message = explode(' ', $text);
         $username = $message[1];
         $password = $message[2];
         if (empty($username) || empty($password)) {
+            $reply = "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu";
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu'
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         }
+        $reply = "Đang thêm tài khoản $username vào hệ thống...";
         $telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Đang thêm tài khoản ' . $username . ' vào hệ thống...'
+            'text' => $reply
         ]);
+        AddLogChat($chatId, $text, $reply);
         $postData = [
             'username' => $username,
             'password' => $password,
@@ -58,55 +75,66 @@ switch ($command) {
         curl_close($ch);
         $response = json_decode($response, true);
         if ($response['status'] == 'error') {
+            $reply = "Đã xảy ra lỗi: " . $response['message'];
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Đã xảy ra lỗi: ' . $response['message']
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         } else if ($response['status'] == 'success') {
+            $reply = "Đã thêm tài khoản $username vào hệ thống. Hệ thống sẽ tự động báo thời khóa biểu cho bạn mỗi khi gần đến giờ học";
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Đã thêm tài khoản ' . $username . ' vào hệ thống. Hệ thống sẽ tự động báo thời khóa biểu cho bạn mỗi khi gần đến giờ học'
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         }
         break;
     case '/data':
-        if (!CheckFileExist($chatId)) {
+        if (!CheckIdChat($chatId)) {
+            $reply = "Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản";
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản'
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         }
         $data = file_get_contents("data/$chatId.json");
         $data = json_decode($data, true);
         $username = $data['username'];
+        $reply = "Đây là các dữ liệu của bạn được lưu trên hệ thống:
+        - <a href='https://tkb.qdevs.tech/data/get.php?act=log&id=$chatId'>Dữ liệu chat</a>
+        - <a href='https://tkb.qdevs.tech/data/get.php?act=data&username=$username&id=$chatId'>Dữ liệu thời khóa biểu</a>";
         $telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Đây là các dữ liệu của bạn được lưu trên hệ thống:
-            - <a href="https://tkb.qdevs.tech/data/' . $chatId . '.json">Dữ liệu chat</a>
-            - <a href="https://tkb.qdevs.tech/data/data-' . $username . '.json">Dữ liệu thời khóa biểu</a>
-            - <a href="https://tkb.qdevs.tech/data/' . $username . '.json">Dữ liệu xơ</a>',
+            'text' => $reply,
             'parse_mode' => 'HTML'
         ]);
+        AddLogChat($chatId, $text, $reply);
         break;
     case '/load':
-        if (!CheckFileExist($chatId)) {
+        if (!CheckIdChat($chatId)) {
+            $reply = "Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản";
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản'
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         }
-        $data = file_get_contents("data/$chatId.json");
+        $data = GetDataUser($chatId);
         $data = json_decode($data, true);
         $username = $data['username'];
         $password = $data['password'];
+        $reply = "Đang tải lại dữ liệu...";
         $telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Đang tải lại dữ liệu...',
+            'text' => $reply
         ]);
+        AddLogChat($chatId, $text, $reply);
         $postData = [
             'username' => $username,
             'password' => $password,
@@ -121,63 +149,81 @@ switch ($command) {
         curl_close($ch);
         $response = json_decode($response, true);
         if ($response['status'] == 'error') {
+            $reply = "Đã xảy ra lỗi: " . $response['message'];
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Đã xảy ra lỗi: ' . $response['message']
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         } else if ($response['status'] == 'success') {
+            $reply = "Đã tải lại dữ liệu thành công";
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Đã tải lại dữ liệu thành công'
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         }
         break;
     case '/delete':
-        if (!CheckFileExist($chatId)) {
+        if (!CheckIdChat($chatId)) {
+            $reply = "Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản";
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản'
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         }
+        $reply = "Đang xóa tài khoản của bạn...";
         $telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => 'Đang xóa tài khoản của bạn...',
+            'text' => $reply
         ]);
-        unlink("data/$chatId.json");
-        $telegram->sendMessage([
-            'chat_id' => $chatId,
-            'text' => 'Đã xóa tài khoản của bạn thành công'
-        ]);
+        AddLogChat($chatId, $text, $reply);
+
+        if (DeleteAllDataUser($chatId)) {
+            $reply = "Đã xóa tài khoản của bạn thành công";
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => $reply
+            ]);
+            AddLogChat($chatId, $text, $reply);
+            break;
+        } else {
+            $reply = "Đã xảy ra lỗi khi xóa tài khoản của bạn";
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => $reply
+            ]);
+            AddLogChat($chatId, $text, $reply);
+            break;
+        }
         break;
     case '/getsubjecttoday':
-        if (!CheckFileExist($chatId)) {
+        if (!CheckIdChat($chatId)) {
+            $reply = "Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản";
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản'
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         }
-        $data = file_get_contents("data/$chatId.json");
-        $data = json_decode($data, true);
-        $username = $data['username'];
-        $dates = file_get_contents("data/data-$username.json");
-        $dates = json_decode($dates, true);
-        file_put_contents("data/log.txt", $dates);
-        $getSubject = getSubjecttoDay($dates);
+        $getSubject = getSubjecttoDay($chatId);
         if ($getSubject == "[]") {
+            $reply = "Hôm nay bạn không có tiết học nào cả";
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Hôm nay bạn không có tiết học nào cả'
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         }
         $json = json_decode($getSubject, true);
-        file_put_contents("data/log.txt", $getSubject);
         $count = count($json);
-        $text = "🔔 Danh sách $count môn học trong ngày hôm nay: \n\n";
+        $reply = "🔔 Danh sách môn học trong ngày hôm nay: \n\n";
         for ($i = 0; $i < $count; $i++) {
             $subject = $json[$i]['subject'];
             $period = $json[$i]['period'];
@@ -186,39 +232,37 @@ switch ($command) {
             $buoi = $json[$i]['buoi'];
             $date = $json[$i]['date'];
             $date = date('d/m/Y', $date);
-            $text .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
+            $reply .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
         }
         $telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => $text
+            'text' => $reply
         ]);
+        AddLogChat($chatId, $text, $reply);
         break;
     case '/getsubjecttoweak':
-        if (!CheckFileExist($chatId)) {
+        if (!CheckIdChat($chatId)) {
+            $reply = "Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản";
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản'
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         }
-        $data = file_get_contents("data/$chatId.json");
-        $data = json_decode($data, true);
-        $username = $data['username'];
-        $dates = file_get_contents("data/data-$username.json");
-        $dates = json_decode($dates, true);
-        file_put_contents("data/log.txt", $dates);
-        $getSubject = getSubjecttoWeek($dates);
+        $getSubject = getSubjecttoWeek($chatId);
         if ($getSubject == "[]") {
+            $reply = "Tuần này bạn không có tiết học nào cả";
             $telegram->sendMessage([
                 'chat_id' => $chatId,
-                'text' => 'Tuần này bạn không có tiết học nào cả'
+                'text' => $reply
             ]);
+            AddLogChat($chatId, $text, $reply);
             break;
         }
         $json = json_decode($getSubject, true);
-        file_put_contents("data/log.txt", $getSubject);
         $count = count($json);
-        $text = "🔔 Danh sách môn học trong tuần này: \n\n";
+        $reply = "🔔 Danh sách môn học trong tuần này: \n\n";
         for ($i = 0; $i < $count; $i++) {
             $subject = $json[$i]['subject'];
             $period = $json[$i]['period'];
@@ -227,11 +271,12 @@ switch ($command) {
             $buoi = $json[$i]['buoi'];
             $date = $json[$i]['date'];
             $date = date('d/m/Y', $date);
-            $text .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
+            $reply .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
         }
         $telegram->sendMessage([
             'chat_id' => $chatId,
-            'text' => $text
+            'text' => $reply
         ]);
+        AddLogChat($chatId, $text, $reply);
         break;
 }
