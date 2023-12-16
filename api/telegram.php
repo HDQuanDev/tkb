@@ -17,10 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $check = mysqli_query($db, "SELECT * FROM `users` WHERE `chatid` = '$chat_id'");
                 $count = count($gop) - 1;
                 $get_name = $gop[$count]["name"];
-                if ($check) {
-                    echo json_encode(array("status" => "error", "message" => "you have already registered, please delete the old account and register again"));
-                    exit();
-                } else {
+                if (mysqli_num_rows($check) == 0) {
                     $sql = "INSERT INTO `users` (`chatid`, `username`, `password`, `name`) VALUES ('$chat_id', '$username', '$password', `$get_name`)";
                     $result = mysqli_query($db, $sql);
                     if (!$result) {
@@ -75,8 +72,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $class = $date['class'];
                     $teacher = $date['teacher'];
                     $buoi = $date['buoi'];
-                    $sql = "INSERT INTO `tkb` (`chatid`, `username`, `date`, `subject`, `period`, `class`, `teacher`, `buoi`) VALUES ('$chat_id', '$username', $time', '$subject', '$period', '$class', '$teacher', '$buoi')";
+                    $add = false;
+                    $sql = "SELECT * FROM `tkb` WHERE `chatid` = '$chat_id' AND `date` = '$time' AND `subject` = '$subject' AND `period` = '$period' AND `class` = '$class' AND `teacher` = '$teacher' AND `buoi` = '$buoi'";
                     $result = mysqli_query($db, $sql);
+                    if (mysqli_num_rows($result) == 1) {
+                        $row = mysqli_fetch_assoc($result);
+                        $phut30 = $row['30phut'];
+                        $phut20 = $row['20phut'];
+                        $phut10 = $row['10phut'];
+                        $start = $row['start'];
+                        if ($phut30 == 'false' || $phut20 == 'false' || $phut10 == 'false' || $start == 'false') {
+                            $add = true;
+                        }
+                    }
+                    if ($add == true) {
+                        $sql = "INSERT INTO `tkb` (`chatid`, `username`, `date`, `subject`, `period`, `class`, `teacher`, `buoi`) VALUES ('$chat_id', '$username', $time', '$subject', '$period', '$class', '$teacher', '$buoi')";
+                        $result = mysqli_query($db, $sql);
+                    }
                 }
             }
             if ($result) {
