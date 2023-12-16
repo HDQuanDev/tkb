@@ -134,18 +134,24 @@ function getSubjecttoWeek($chatid)
 {
     global $db;
     $currentDate = new DateTime();
-    $weekStart = clone $currentDate;
-    $weekEnd = clone $currentDate;
-    if ($currentDate->format('N') != 1) { // If it's not Monday
-        $weekStart->modify('last monday');
-    }
-    if ($currentDate->format('N') != 7) { // If it's not Sunday
-        $weekEnd->modify('next sunday');
-    }
-    $weekStart = $weekStart->format('Y-m-d');
-    $weekEnd = $weekEnd->format('Y-m-d');
+    $currentDate->setTimezone(new DateTimeZone('Asia/Ho_Chi_Minh')); // Đặt múi giờ về múi giờ của Việt Nam
+    $week = $currentDate->format("W");
+    $year = $currentDate->format("o");
+
+    // Tính toán thời điểm bắt đầu và kết thúc của tuần
+    $weekStart = new DateTime();
+    $weekStart->setISODate($year, $week);
+    $weekStart->setTime(0, 0, 0); // Đặt thời điểm bắt đầu của ngày về 00:00:00
+    $weekEnd = clone $weekStart;
+    $weekEnd->modify('+6 days');
+    $weekEnd->setTime(23, 59, 59); // Đặt thời điểm kết thúc của ngày về 23:59:59
+
+    $weekStart = $weekStart->format('Y-m-d H:i:s');
+    $weekEnd = $weekEnd->format('Y-m-d H:i:s');
+
     $sql = "SELECT *, FROM_UNIXTIME(`date`, '%Y-%m-%d') as `date_formatted` FROM `tkb` WHERE `chatid` = '$chatid'";
     $result = mysqli_query($db, $sql);
+
     $subjects = [];
     while ($row = mysqli_fetch_assoc($result)) {
         $date_get = $row['date_formatted'];
@@ -154,8 +160,10 @@ function getSubjecttoWeek($chatid)
             $subjects[] = $row;
         }
     }
+
     if (count($subjects) == 0) {
         return "[]";
     }
+
     return json_encode($subjects);
 }
