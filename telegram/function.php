@@ -1,4 +1,5 @@
 <?php
+
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 $periods = [
     1 => ['start' => '6:45', 'end' => '7:35'],
@@ -109,8 +110,19 @@ function isCurrentPeriodAndDay($date, $period)
 }
 function convertToTimestamp($dateString)
 {
-    $date = DateTime::createFromFormat('H:i d/m/Y', $dateString);
-    return $date->getTimestamp();
+    if (is_numeric($dateString)) {
+        // If the input is a Unix timestamp, return it as is
+        return (int)$dateString;
+    } else {
+        // Otherwise, try to parse it as a date string
+        $date = DateTime::createFromFormat('H:i d/m/Y', $dateString);
+        if ($date === false) {
+            // If the date string could not be parsed, return null
+            return null;
+        } else {
+            return $date->getTimestamp();
+        }
+    }
 }
 function getSubjecttoDay($chatid)
 {
