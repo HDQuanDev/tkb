@@ -14,6 +14,39 @@ $text = $update['message']['text'];
 
 $tach = explode(' ', $text);
 $command = $tach[0];
+if (isset($update['callback_query'])) {
+    $callback_query = $update['callback_query'];
+    $data_telegram = $callback_query['data'];
+    switch ($data_telegram) {
+        case '/confirm_delete':
+            $reply = "Đang xóa tài khoản của bạn...";
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => $reply
+            ]);
+            AddLogChat($chatId, $text, $reply);
+            if (DeleteAllDataUser($chatId)) {
+                $reply = "Đã xóa tài khoản của bạn thành công";
+            } else {
+                $reply = "Đã xảy ra lỗi khi xóa tài khoản của bạn";
+            }
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => $reply
+            ]);
+            AddLogChat($chatId, $text, $reply);
+            break;
+
+        case '/cancel_delete':
+            $reply = "Hủy xóa tài khoản";
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => $reply
+            ]);
+            AddLogChat($chatId, $text, $reply);
+            break;
+    }
+}
 switch ($command) {
     case '/start':
         if (CheckIdChat($chatId)) {
@@ -189,33 +222,6 @@ switch ($command) {
                     ],
                 ],
             ]),
-        ]);
-        break;
-
-    case '/confirm_delete':
-        $reply = "Đang xóa tài khoản của bạn...";
-        $telegram->sendMessage([
-            'chat_id' => $chatId,
-            'text' => $reply
-        ]);
-        AddLogChat($chatId, $text, $reply);
-        if (DeleteAllDataUser($chatId)) {
-            $reply = "Đã xóa tài khoản của bạn thành công";
-        } else {
-            $reply = "Đã xảy ra lỗi khi xóa tài khoản của bạn";
-        }
-        $telegram->sendMessage([
-            'chat_id' => $chatId,
-            'text' => $reply
-        ]);
-        AddLogChat($chatId, $text, $reply);
-        break;
-
-    case '/cancel_delete':
-        $reply = "Hủy xóa tài khoản";
-        $telegram->sendMessage([
-            'chat_id' => $chatId,
-            'text' => $reply
         ]);
         AddLogChat($chatId, $text, $reply);
         break;

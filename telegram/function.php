@@ -38,6 +38,9 @@ function CheckIdChat($chat_id)
 function AddLogChat($chat_id, $message, $reply = null)
 {
     global $db;
+    $message = mysqli_real_escape_string($db, $message);
+    $reply = mysqli_real_escape_string($db, $reply);
+    $chat_id = mysqli_real_escape_string($db, $chat_id);
     $sql = "INSERT INTO `log` (`chatid`, `message`, `reply`) VALUES ('$chat_id', '$message', '$reply')";
     $result = mysqli_query($db, $sql);
     if ($result) {
