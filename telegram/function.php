@@ -167,3 +167,22 @@ function getSubjecttoWeek($chatid)
 
     return json_encode($subjects);
 }
+function getSubjectTomorrow($chatid)
+{
+    global $db;
+    date_default_timezone_set('Asia/Ho_Chi_Minh');
+    $tomorrowDate = date('Y-m-d', strtotime("+1 day"));
+    $sql = "SELECT * FROM `tkb` WHERE `chatid` = '$chatid'";
+    $result = mysqli_query($db, $sql);
+    $subjects = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $date_formatted = date('Y-m-d', $row['date']);
+        if ($date_formatted == $tomorrowDate) {
+            $subjects[] = $row;
+        }
+    }
+    if (count($subjects) == 0) {
+        return "[]";
+    }
+    return json_encode($subjects);
+}
