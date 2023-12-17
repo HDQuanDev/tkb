@@ -279,4 +279,52 @@ switch ($command) {
         ]);
         AddLogChat($chatId, $text, $reply);
         break;
+    case '/getsubjecttomorrow':
+        if (!CheckIdChat($chatId)) {
+            $reply = "Bạn chưa thêm tài khoản. Để thêm tài khoản vui lòng gõ /addaccount [tên đăng nhập ictu] [mật khẩu ictu] để thêm tài khoản";
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => $reply
+            ]);
+            AddLogChat($chatId, $text, $reply);
+            break;
+        }
+        $getSubject = getSubjectTomorrow($chatId);
+        if ($getSubject == "[]") {
+            $reply = "Ngày mai bạn không có tiết học nào cả";
+            $telegram->sendMessage([
+                'chat_id' => $chatId,
+                'text' => $reply
+            ]);
+            AddLogChat($chatId, $text, $reply);
+            break;
+        }
+        $json = json_decode($getSubject, true);
+        $count = count($json);
+        $reply = "🔔 Danh sách môn học trong ngày mai: \n\n";
+        for ($i = 0; $i < $count; $i++) {
+            $subject = $json[$i]['subject'];
+            $period = $json[$i]['period'];
+            $class = $json[$i]['class'];
+            $teacher = $json[$i]['teacher'];
+            $buoi = $json[$i]['buoi'];
+            $date = $json[$i]['date'];
+            $date = date('d/m/Y', $date);
+            $reply .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
+        }
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $reply
+        ]);
+        AddLogChat($chatId, $text, $reply);
+        break;
+    case '/support':
+        $reply = '🛠 Để liên hệ góp ý và báo lỗi vui lòng truy cập FB: <a href="https://www.facebook.com/quancp72h">@quancp72h</a>';
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $reply,
+            'parse_mode' => 'HTML'
+        ]);
+        AddLogChat($chatId, $text, $reply);
+        break;
 }
