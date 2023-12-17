@@ -1,10 +1,8 @@
 <?php
-error_reporting(0);
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 require 'vendor/autoload.php';
 require_once 'telegram/function.php';
 $botToken = '5945931731:AAF3FzfZaQB2-SqdHGVeLnu-saQVDkxs9uA';
-
 $telegram = new Telegram\Bot\Api($botToken);
 switch ($_GET['act']) {
     case 'tomorrow':
@@ -33,7 +31,6 @@ switch ($_GET['act']) {
                 AddLogChat($chat_id, '', $reply);
             }
         }
-
         break;
     default:
         $get_user = mysqli_query($db, "SELECT * FROM `users`");
