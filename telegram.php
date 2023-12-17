@@ -224,6 +224,7 @@ switch ($command) {
         $json = json_decode($getSubject, true);
         $count = count($json);
         $reply = "🔔 Danh sách môn học trong ngày hôm nay: \n\n";
+        $q = 1;
         for ($i = 0; $i < $count; $i++) {
             $subject = $json[$i]['subject'];
             $period = $json[$i]['period'];
@@ -232,7 +233,9 @@ switch ($command) {
             $buoi = $json[$i]['buoi'];
             $date = $json[$i]['date'];
             $date = date('d/m/Y', $date);
-            $reply .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
+            $getstartandend = getStartAndEndTime($period);
+            $reply .= "#$q: $getstartandend\n📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
+            $q++;
         }
         $telegram->sendMessage([
             'chat_id' => $chatId,
@@ -263,6 +266,7 @@ switch ($command) {
         $json = json_decode($getSubject, true);
         $count = count($json);
         $reply = "🔔 Danh sách môn học trong tuần này: \n\n";
+        $q = 1;
         for ($i = 0; $i < $count; $i++) {
             $subject = $json[$i]['subject'];
             $period = $json[$i]['period'];
@@ -271,7 +275,9 @@ switch ($command) {
             $buoi = $json[$i]['buoi'];
             $date = $json[$i]['date'];
             $date = date('d/m/Y', $date);
-            $reply .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
+            $getstartandend = getStartAndEndTime($period);
+            $reply .= "#$q: $getstartandend\n📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
+            $q++;
         }
         $telegram->sendMessage([
             'chat_id' => $chatId,
@@ -302,6 +308,7 @@ switch ($command) {
         $json = json_decode($getSubject, true);
         $count = count($json);
         $reply = "🔔 Danh sách môn học trong ngày mai: \n\n";
+        $q = 1;
         for ($i = 0; $i < $count; $i++) {
             $subject = $json[$i]['subject'];
             $period = $json[$i]['period'];
@@ -310,7 +317,8 @@ switch ($command) {
             $buoi = $json[$i]['buoi'];
             $date = $json[$i]['date'];
             $date = date('d/m/Y', $date);
-            $reply .= "📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
+            $getstartandend = getStartAndEndTime($period);
+            $reply .= "#$q: $getstartandend\n📚 Môn học: $subject \n⏰ Tiết: $period \n🏫 Phòng: $class \n👨‍🏫 Giáo viên: $teacher \n📅 Ngày: $date\n\n";
         }
         $telegram->sendMessage([
             'chat_id' => $chatId,
@@ -327,21 +335,5 @@ switch ($command) {
         ]);
         AddLogChat($chatId, $text, $reply);
         break;
-    case '/test1':
-        $telegram->sendMessage([
-            'chat_id' => $chatId,
-            'text' => 'test1',
-            'reply_markup' => json_encode([
-                'remove_keyboard' => true,
-            ]),
-        ]);
-        sleep(5);
-        $telegram->sendMessage([
-            'chat_id' => $chatId,
-            'text' => 'test2',
-            'reply_markup' => json_encode([
-                'remove_keyboard' => false,
-            ]),
-        ]);
-        break;
+
 }

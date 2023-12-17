@@ -24,8 +24,11 @@ switch ($_GET['act']) {
             } else {
                 $get_tomorrow = json_decode($get_tomorrow, true);
                 $reply = "🔔 Thông Báo!\n\n📌 Ngày mai bạn có lịch học như sau:\n\n";
+                $q = 1;
                 foreach ($get_tomorrow as $key => $value) {
-                    $reply .= "📅 Ngày: " . date('d/m/Y', $value["date"]) . "\n⏰ Tiết: " . $value['period'] . "\n📚 Môn: " . $value['subject'] . "\n👨‍🏫 Giáo viên: " . $value['teacher'] . "\n🏫 Phòng: " . $value['class'] . "\n\n";
+                    $getstartandend = getStartAndEndTime($value['period']);
+                    $reply .= "#$q: $getstartandend\n📅 Ngày: " . date('d/m/Y', $value["date"]) . "\n⏰ Tiết: " . $value['period'] . "\n📚 Môn: " . $value['subject'] . "\n👨‍🏫 Giáo viên: " . $value['teacher'] . "\n🏫 Phòng: " . $value['class'] . "\n\n";
+                    $q++;
                 }
                 $telegram->sendMessage([
                     'chat_id' => $chat_id,
@@ -77,8 +80,9 @@ switch ($_GET['act']) {
                 if ($time < $time_start_ex) {
                     $seconds_remaining = $time_start - $time;
                     $minutes_remaining = floor($seconds_remaining / 60);
+                    $getstartandend = getStartAndEndTime($row['period']);
                     if ($data_notification['30phut'] == 'false' && $time >= $time_start - 1800 && $time <= $time_start - 1200) {
-                        $reply = "🔔 Thông báo còn $minutes_remaining phút nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
+                        $reply = "🔔 Thông báo còn $minutes_remaining phút nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . " | Học từ: $getstartandend\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
                         $telegram->sendMessage([
                             'chat_id' => $chat_id,
                             'text' => $reply
@@ -87,7 +91,7 @@ switch ($_GET['act']) {
                         $update_notification = mysqli_query($db, "UPDATE `notification` SET `30phut` = 'true' WHERE `chatid` = '$chat_id' AND `username` = '$username' AND `id_mon` = '$id'");
                         $send_success = true;
                     } else if ($data_notification['20phut'] == 'false' && $time >= $time_start - 1200 && $time <= $time_start - 600) {
-                        $reply = "🔔 Thông báo còn $minutes_remaining phút nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
+                        $reply = "🔔 Thông báo còn $minutes_remaining phút nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . " | Học từ: $getstartandend\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
                         $telegram->sendMessage([
                             'chat_id' => $chat_id,
                             'text' => $reply
@@ -96,7 +100,7 @@ switch ($_GET['act']) {
                         $update_notification = mysqli_query($db, "UPDATE `notification` SET `20phut` = 'true' WHERE `chatid` = '$chat_id' AND `username` = '$username' AND `id_mon` = '$id'");
                         $send_success = true;
                     } else if ($data_notification['10phut'] == 'false' && $time >= $time_start - 600 && $time <= $time_start - 300) {
-                        $reply = "🔔 Thông báo còn $minutes_remaining phút nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
+                        $reply = "🔔 Thông báo còn $minutes_remaining phút nữa vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . " | Học từ: $getstartandend\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
                         $telegram->sendMessage([
                             'chat_id' => $chat_id,
                             'text' => $reply
@@ -105,7 +109,7 @@ switch ($_GET['act']) {
                         $update_notification = mysqli_query($db, "UPDATE `notification` SET `10phut` = 'true' WHERE `chatid` = '$chat_id' AND `username` = '$username' AND `id_mon` = '$id'");
                         $send_success = true;
                     } else if ($data_notification['start'] == 'false' && $time >= $time_start - 100 && $time <= $time_start) {
-                        $reply = "🔔 Thông báo đã bắt đầu vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . "\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
+                        $reply = "🔔 Thông báo đã bắt đầu vào tiết học: \n\n📅 Ngày: " . date('d/m/Y', $row["date"]) . "\n⏰ Tiết: " . $row['period'] . " | Học từ: $getstartandend\n📚 Môn: " . $row['subject'] . "\n👨‍🏫 Giáo viên: " . $row['teacher'] . "\n🏫 Phòng: " . $lop;
                         $telegram->sendMessage([
                             'chat_id' => $chat_id,
                             'text' => $reply
