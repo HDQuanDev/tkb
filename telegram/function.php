@@ -147,17 +147,16 @@ function getSubjecttoWeek($chatid)
     $weekEnd->modify('+6 days');
     $weekEnd->setTime(23, 59, 59); // Đặt thời điểm kết thúc của ngày về 23:59:59
 
-    $weekStart = $weekStart->format('Y-m-d H:i:s');
-    $weekEnd = $weekEnd->format('Y-m-d H:i:s');
+    $weekStart = $weekStart->getTimestamp();
+    $weekEnd = $weekEnd->getTimestamp();
 
-    $sql = "SELECT *, FROM_UNIXTIME(`date`, '%Y-%m-%d') as `date_formatted` FROM `tkb` WHERE `chatid` = '$chatid'";
+    $sql = "SELECT * FROM `tkb` WHERE `chatid` = '$chatid'";
     $result = mysqli_query($db, $sql);
 
     $subjects = [];
     while ($row = mysqli_fetch_assoc($result)) {
-        $date_get = $row['date_formatted'];
+        $date_get = $row['date'];
         if ($date_get >= $weekStart && $date_get <= $weekEnd) {
-            unset($row['date_formatted']); // remove the formatted date from the result
             $subjects[] = $row;
         }
     }
