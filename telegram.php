@@ -327,4 +327,21 @@ switch ($command) {
         ]);
         AddLogChat($chatId, $text, $reply);
         break;
+    case '/test1':
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => 'test1',
+            'reply_markup' => json_encode([
+                'remove_keyboard' => true,
+            ]),
+        ]);
+        sleep(5);
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => 'test2',
+            'reply_markup' => json_encode([
+                'remove_keyboard' => false,
+            ]),
+        ]);
+        break;
 }
