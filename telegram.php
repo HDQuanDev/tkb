@@ -176,30 +176,48 @@ switch ($command) {
             AddLogChat($chatId, $text, $reply);
             break;
         }
+
+        $reply = "Bạn có chắc chắn muốn xóa tài khoản của bạn? Thao tác này sẽ xóa toàn bộ dữ liệu của bạn trên hệ thống!";
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $reply,
+            'reply_markup' => json_encode([
+                'inline_keyboard' => [
+                    [
+                        ['text' => 'Xác nhận', 'callback_data' => '/confirm_delete'],
+                        ['text' => 'Hủy', 'callback_data' => '/cancel_delete'],
+                    ],
+                ],
+            ]),
+        ]);
+        break;
+
+    case '/confirm_delete':
         $reply = "Đang xóa tài khoản của bạn...";
         $telegram->sendMessage([
             'chat_id' => $chatId,
             'text' => $reply
         ]);
         AddLogChat($chatId, $text, $reply);
-
         if (DeleteAllDataUser($chatId)) {
             $reply = "Đã xóa tài khoản của bạn thành công";
-            $telegram->sendMessage([
-                'chat_id' => $chatId,
-                'text' => $reply
-            ]);
-            AddLogChat($chatId, $text, $reply);
-            break;
         } else {
             $reply = "Đã xảy ra lỗi khi xóa tài khoản của bạn";
-            $telegram->sendMessage([
-                'chat_id' => $chatId,
-                'text' => $reply
-            ]);
-            AddLogChat($chatId, $text, $reply);
-            break;
         }
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $reply
+        ]);
+        AddLogChat($chatId, $text, $reply);
+        break;
+
+    case '/cancel_delete':
+        $reply = "Hủy xóa tài khoản";
+        $telegram->sendMessage([
+            'chat_id' => $chatId,
+            'text' => $reply
+        ]);
+        AddLogChat($chatId, $text, $reply);
         break;
     case '/getsubjecttoday':
         if (!CheckIdChat($chatId)) {
@@ -326,7 +344,7 @@ switch ($command) {
         ]);
         AddLogChat($chatId, $text, $reply);
         break;
-    case '/support':
+    case '/help':
         $reply = '🛠 Để liên hệ góp ý và báo lỗi vui lòng truy cập FB: <a href="https://www.facebook.com/quancp72h">@quancp72h</a>';
         $telegram->sendMessage([
             'chat_id' => $chatId,
@@ -335,5 +353,4 @@ switch ($command) {
         ]);
         AddLogChat($chatId, $text, $reply);
         break;
-
 }
