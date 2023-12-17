@@ -117,12 +117,12 @@ function getSubjecttoDay($chatid)
     global $db;
     date_default_timezone_set('Asia/Ho_Chi_Minh');
     $currentDate = date('Y-m-d');
-    $sql = "SELECT *, DATE(FROM_UNIXTIME(`date`)) as `date_formatted` FROM `tkb` WHERE `chatid` = '$chatid'";
+    $sql = "SELECT * FROM `tkb` WHERE `chatid` = '$chatid'";
     $result = mysqli_query($db, $sql);
     $subjects = [];
     while ($row = mysqli_fetch_assoc($result)) {
-        if ($row['date_formatted'] == $currentDate) {
-            unset($row['date_formatted']);
+        $date_formatted = date('Y-m-d', $row['date']);
+        if ($date_formatted == $currentDate) {
             $subjects[] = $row;
         }
     }
