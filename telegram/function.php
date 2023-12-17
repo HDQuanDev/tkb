@@ -17,7 +17,7 @@ $periods = [
     13 => ['start' => '20:10', 'end' => '21:00'],
     14 => ['start' => '21:10', 'end' => '22:00'],
     15 => ['start' => '22:10', 'end' => '23:00'],
-    17 => ['start' => '23:30', 'end' => '00:20'],
+    16 => ['start' => '23:30', 'end' => '00:20'],
 ];
 $db = mysqli_connect('localhost', 'qdevs_tkb', '2S.XY0?()JmL', 'qdevs_tkb');
 mysqli_set_charset($db, 'utf8');
