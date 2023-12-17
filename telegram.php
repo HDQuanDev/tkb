@@ -184,8 +184,8 @@ switch ($command) {
             'reply_markup' => json_encode([
                 'inline_keyboard' => [
                     [
-                        ['text' => 'Xác nhận', 'callback_data' => '/confirm_delete'],
-                        ['text' => 'Hủy', 'callback_data' => '/cancel_delete'],
+                        ['text' => '✅ Xác nhận', 'callback_data' => '/confirm_delete'],
+                        ['text' => '❌ Hủy', 'callback_data' => '/cancel_delete'],
                     ],
                 ],
             ]),
