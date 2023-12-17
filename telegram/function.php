@@ -115,8 +115,9 @@ function convertToTimestamp($dateString)
 function getSubjecttoDay($chatid)
 {
     global $db;
+    date_default_timezone_set('Asia/Ho_Chi_Minh');
     $currentDate = date('Y-m-d');
-    $sql = "SELECT *, FROM_UNIXTIME(`date`, '%Y-%m-%d') as `date_formatted` FROM `tkb` WHERE `chatid` = '$chatid'";
+    $sql = "SELECT *, DATE(FROM_UNIXTIME(`date`)) as `date_formatted` FROM `tkb` WHERE `chatid` = '$chatid'";
     $result = mysqli_query($db, $sql);
     $subjects = [];
     while ($row = mysqli_fetch_assoc($result)) {
