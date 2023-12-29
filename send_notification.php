@@ -124,7 +124,7 @@ switch ($_GET['act']) {
                 }
             }
             $time = time();
-            $time_update = convertToTimestamp($row_user['time']);
+            $time_update = $row_user['time'];
             $time_update = $time_update + 87000;
             if ($time > $time_update && $get_user['tkb_old'] == 'false') {
                 $reply = "🔔 Thông báo cập nhật thời khóa biểu: \n\n🎨 Dữ liệu thời khóa biểu của bạn đã cũ hơn 1 ngày, để cập nhật lại thời khóa biểu mới, vui lòng sử dụng lệnh /load";
