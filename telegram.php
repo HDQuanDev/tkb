@@ -87,7 +87,7 @@ switch ($command) {
             AddLogChat($chatId, $text, $reply);
             break;
         }
-        $reply = "Đang thêm tài khoản $username vào hệ thống...";
+        $reply = "Đang thêm tài khoản $username vào hệ thống, vui lòng chờ từ 1p - 3p...";
         $telegram->sendMessage([
             'chat_id' => $chatId,
             'text' => $reply
@@ -162,7 +162,7 @@ switch ($command) {
         $data = json_decode($data, true);
         $username = $data['username'];
         $password = $data['password'];
-        $reply = "Đang tải lại dữ liệu...";
+        $reply = "Đang tải lại dữ liệu, vui lòng chờ từ 1p-3p...";
         $telegram->sendMessage([
             'chat_id' => $chatId,
             'text' => $reply
