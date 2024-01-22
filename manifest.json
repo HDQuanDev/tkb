@@ -3,8 +3,9 @@
     "short_name": "TKB QDEV",
     "description": "Ứng dụng xem thời khóa biểu của QDEV",
     "start_url": "/",
+    "orientation": "portrait",
     "display": "standalone",
-    "background_color": "#fff",
+    "background_color": "##CECECE",
     "theme_color": "#3f51b5",
     "icons": [{
             "src": "/assets/img/TKB.QDEVS.TECH.png",

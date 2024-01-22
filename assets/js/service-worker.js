@@ -7,7 +7,7 @@ var urlsToCache = [
     '/assets/css/general.css',
     '/assets/css/contentbox.css',
     '/assets/css/bootstrap-grid.min.css',
-    '/assets/js/main.js',
+    '/assets/js/main.js?v=1',
     '/assets/img/TKB.QDEVS.TECH.png',
 ];
 
