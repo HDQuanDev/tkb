@@ -36,12 +36,39 @@
     <link rel="stylesheet" href="assets/css/contentbox.css?v=<?= time(); ?>">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- Scripts -->
-    <script src="assets/js/main.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- manifest.json -->
+    <link rel="manifest" href="/manifest.json">
+    <script>
+        self.addEventListener('install', function(event) {
+            event.waitUntil(
+                caches.open('my-cache').then(function(cache) {
+                    return cache.addAll([
+                        '/',
+                        '/index.php',
+                        '/assets/css/general.css',
+                        '/assets/css/contentbox.css',
+                        '/assets/css/bootstrap-grid.min.css',
+                        '/assets/css/elegant-font.css',
+                        '/assets/js/main.js',
+                        '/assets/img/TKB.QDEVS.TECH.png',
+                    ]);
+                })
+            );
+        });
+
+        self.addEventListener('fetch', function(event) {
+            event.respondWith(
+                caches.match(event.request).then(function(response) {
+                    return response || fetch(event.request);
+                })
+            );
+        });
+    </script>
     <style>
         #loginPopup {
             background: #1c768f;
