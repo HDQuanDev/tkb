@@ -15,9 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $item['chat_id'] = $chat_id;
                 }
                 $check = mysqli_query($db, "SELECT * FROM `users` WHERE `chatid` = '$chat_id'");
-                $count = count($gop) - 1;
-                $get_name = $gop[$count]["name"];
                 if (mysqli_num_rows($check) == 0) {
+                    $count = count($gop) - 1;
+                    $get_name = $gop[$count]["name"];
                     $sql = "INSERT INTO `users` (`chatid`, `username`, `password`, `name`) VALUES ('$chat_id', '$username', '$password', '$get_name')";
                     $result = mysqli_query($db, $sql);
                     if (!$result) {
