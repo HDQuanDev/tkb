@@ -188,7 +188,6 @@ switch ($command) {
                 'text' => $reply
             ]);
             AddLogChat($chatId, $text, $reply);
-            break;
         } else if ($response['status'] == 'success') {
             $reply = "Đã tải lại dữ liệu thành công";
             $telegram->sendMessage([
@@ -196,7 +195,6 @@ switch ($command) {
                 'text' => $reply
             ]);
             AddLogChat($chatId, $text, $reply);
-            break;
         }
         break;
     case '/delete':
